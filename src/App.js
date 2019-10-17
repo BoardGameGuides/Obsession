@@ -14,7 +14,12 @@ function importAll (r) {
 }
 importAll(require.context('!babel-loader!mdx-loader!./content/', true, /\.mdx$/));
 
-console.log(Object.keys(content)[0]);
+const routes = {};
+for (const key of Object.keys(content)) {
+  const route = key.replace(/^\.+/, '').replace(/\.mdx$/, '');
+  console.log(route);
+  routes[route] = content[key].default;
+}
 var Test = content[Object.keys(content)[0]].default;
 
 function App() {
@@ -22,9 +27,7 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-          <Route path="/guests/test">
-            <Test />
-          </Route>
+          {Object.keys(routes).map(route => <Route path={route} key={route}>{routes[route]}</Route>)}
           <Route path="/">
             <header className="App-header">
               <img src={logo} className="App-logo" alt="logo" />
