@@ -20,14 +20,13 @@ for (const key of Object.keys(content)) {
   console.log(route);
   routes[route] = content[key].default;
 }
-var Test = content[Object.keys(content)[0]].default;
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Switch>
-          {Object.keys(routes).map(route => <Route path={route} key={route}>{routes[route]}</Route>)}
+          {Object.keys(routes).map(route => <Route exact path={route} key={route}>{routes[route]}</Route>)}
           <Route path="/">
             <header className="App-header">
               <img src={logo} className="App-logo" alt="logo" />
