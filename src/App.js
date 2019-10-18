@@ -3,6 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import { MDXProvider } from '@mdx-js/react';
 import { Builder } from 'lunr';
 import { combine } from './relativePath';
+import { importContext } from './importer';
 import logo from './logo.svg';
 import './App.css';
 import {
@@ -12,27 +13,19 @@ import {
   Link
 } from "react-router-dom";
 
-function importAll2(r) {
-  const result = {};
-  r.keys().forEach(key => result[key] = r(key));
-  return result;
-}
-const images = importAll2(require.context('./content/', true, /\.(jpg|png)$/));
+const images = importContext(require.context('./content/', true, /\.(jpg|png)$/));
+const pages = importContext(require.context('!babel-loader!mdx-loader!./content/', true, /\.mdx$/));
 
-const content = {};
-function importAll(r) {
-  r.keys().forEach(key => {
-    const route = key.replace(/^\.+/, '').replace(/\.mdx$/, '');
-    const contentModule = r(key);
-    content[route] = {
-      key,
-      route,
-      Component: contentModule.default,
-      metadata: contentModule.frontMatter
-    };
-  });
+const routes = {};
+for (const path in pages) {
+  const route = path.replace(/^\.+/, '').replace(/\.mdx$/, '');
+  routes[route] = {
+    path,
+    route,
+    Component: pages[path].importedModule.default,
+    metadata: pages[path].importedModule.frontMatter
+  };
 }
-importAll(require.context('!babel-loader!mdx-loader!./content/', true, /\.mdx$/));
 
 // TODO: use htmlparser2 and build the index offline during production builds. Only build the index in the browser on dev builds.
 // TODO: make HTML parsing more intelligent: treat <h1> as the title and boost, maybe ignore other headers?
@@ -74,10 +67,10 @@ if (process.env.NODE_ENV !== 'production') {
   // builder.field('vp'); // <number> - the VP value of the card
   // builder.field('casual'); // 'true' or 'false' - whether a guest is a casual guest
   // builder.field('starter'); // 'true' or 'false' - whether a guest is a starter guest
-  for (const route of Object.keys(content)) {
-    const doc = Object.assign(content[route].metadata, {
+  for (const route of Object.keys(routes)) {
+    const doc = Object.assign(routes[route].metadata, {
       id: route,
-      text: plaintext(content[route].Component),
+      text: plaintext(routes[route].Component),
       type: route.startsWith('/guests') ? 'guest' : 'tile'
     });
     console.log(doc);
@@ -89,8 +82,8 @@ if (process.env.NODE_ENV !== 'production') {
 function MyImage(route) {
   return function (props) {
     // Note: this will break on absolute image references!
-    const imageImportPath = combine(content[route].key, '..', props.src);
-    return <img {...props} src={images[imageImportPath]} />;
+    const imageImportPath = combine(routes[route].path, '..', props.src);
+    return <img {...props} src={images[imageImportPath].importedModule} />;
   };
 }
 
@@ -105,7 +98,7 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-          {Object.keys(content).map(route => <Route exact path={route} key={route}><MDXProvider components={getComponents(route)}>{React.createElement(content[route].Component)}</MDXProvider></Route>)}
+          {Object.keys(routes).map(route => <Route exact path={route} key={route}><MDXProvider components={getComponents(route)}>{React.createElement(routes[route].Component)}</MDXProvider></Route>)}
           <Route path="/">
             <header className="App-header">
               <img src={logo} className="App-logo" alt="logo" />
