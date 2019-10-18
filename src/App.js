@@ -17,7 +17,8 @@ function importAll(r) {
     const contentModule = r(key);
     content[route] = {
       route,
-      Component: contentModule.default
+      Component: contentModule.default,
+      metadata: contentModule.frontMatter
     };
   });
 }
@@ -54,9 +55,21 @@ if (process.env.NODE_ENV !== 'production') {
   }
 
   const builder = new Builder();
+  builder.field('title');
   builder.field('text');
+
+  // TODO: auto-add fields found in metadata as space-delimited exact-match tokens.
+  builder.field('type');
+  builder.field('category');
+  // builder.field('vp'); // <number> - the VP value of the card
+  // builder.field('casual'); // 'true' or 'false' - whether a guest is a casual guest
+  // builder.field('starter'); // 'true' or 'false' - whether a guest is a starter guest
   for (const route of Object.keys(content)) {
-    const doc = { id: route, text: plaintext(content[route].Component) };
+    const doc = Object.assign(content[route].metadata, {
+      id: route,
+      text: plaintext(content[route].Component),
+      type: route.startsWith('/guests') ? 'guest' : 'tile'
+    });
     console.log(doc);
     builder.add(doc);
   }
