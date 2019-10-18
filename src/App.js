@@ -1,31 +1,12 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
+import Home from './Home';
 import { Builder } from 'lunr';
 import { combine } from './path';
-import { importContext } from './importer';
-import logo from './logo.svg';
+import { images, routes } from './contentFiles';
 import './App.css';
-import {
-  HashRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-
-const images = importContext(require.context('./content/', true, /\.(jpg|png)$/));
-const pages = importContext(require.context('!babel-loader!mdx-loader!./content/', true, /\.mdx$/));
-
-const routes = {};
-for (const path in pages) {
-  const route = path.replace(/^\.+/, '').replace(/\.mdx$/, '');
-  routes[route] = {
-    path,
-    route,
-    Component: pages[path].importedModule.default,
-    metadata: pages[path].importedModule.frontMatter
-  };
-}
 
 // TODO: use htmlparser2 and build the index offline during production builds. Only build the index in the browser on dev builds.
 // TODO: make HTML parsing more intelligent: treat <h1> as the title and boost, maybe ignore other headers?
@@ -119,18 +100,7 @@ function App() {
         <Switch>
           {Object.keys(routes).map(route => <Route exact path={route} key={route}><MDXProvider components={getComponents(route)}>{React.createElement(routes[route].Component)}</MDXProvider></Route>)}
           <Route path="/">
-            <header className="App-header">
-              <img src={logo} className="App-logo" alt="logo" />
-              <p>
-                Edit <code>src/App.js</code> and save to reload.
-              </p>
-              <p>
-                <Link to="/guests/sara-forbes-bonetta">See Sara</Link>
-              </p>
-              <p>
-                <Link to="/tiles/barn">See Barn</Link>
-              </p>
-            </header>
+            <Home/>
           </Route>
         </Switch>
       </Router>
