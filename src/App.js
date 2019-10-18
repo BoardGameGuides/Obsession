@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { MDXProvider } from '@mdx-js/react';
 import { Builder } from 'lunr';
 import logo from './logo.svg';
 import './App.css';
@@ -10,12 +11,20 @@ import {
   Link
 } from "react-router-dom";
 
+function importAll2(r) {
+  const result = {};
+  r.keys().forEach(key => result[key] = r(key));
+  return result;
+}
+console.log(importAll2(require.context('./content/', true, /\.(jpg|png)$/)));
+
 const content = {};
 function importAll(r) {
   r.keys().forEach(key => {
     const route = key.replace(/^\.+/, '').replace(/\.mdx$/, '');
     const contentModule = r(key);
     content[route] = {
+      key,
       route,
       Component: contentModule.default,
       metadata: contentModule.frontMatter
@@ -76,12 +85,31 @@ if (process.env.NODE_ENV !== 'production') {
   window.index = builder.build();
 }
 
+function convertPath(route, path) {
+  console.log(route, content[route].key, path);
+  console.log(URI(path).absoluteTo(content[route].key));
+}
+
+function MyImage(route) {
+  console.log(route);
+  return function (props) {
+    convertPath(route, props.src);
+    return <p>Hi!</p>;
+  };
+}
+
+function getComponents(route) {
+  return {
+    img: MyImage(route)
+  };
+}
+
 function App() {
   return (
     <div className="App">
       <Router>
         <Switch>
-          {Object.keys(content).map(route => <Route exact path={route} key={route}>{content[route].Component}</Route>)}
+          {Object.keys(content).map(route => <Route exact path={route} key={route}><MDXProvider components={getComponents(route)}>{React.createElement(content[route].Component)}</MDXProvider></Route>)}
           <Route path="/">
             <header className="App-header">
               <img src={logo} className="App-logo" alt="logo" />
