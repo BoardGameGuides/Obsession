@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { MDXProvider } from '@mdx-js/react';
 import { Builder } from 'lunr';
-import { combine } from './relativePath';
+import { combine } from './path';
 import { importContext } from './importer';
 import logo from './logo.svg';
 import './App.css';
@@ -79,17 +79,36 @@ if (process.env.NODE_ENV !== 'production') {
   window.index = builder.build();
 }
 
-function MyImage(route) {
+/** Whether the string is an external resource, i.e., an absolute or protocol relative URI. */
+function isExternal(text) {
+  return text.startsWith('//') || text.search(/^[a-zA-Z]+:/) !== -1;
+}
+
+function RelativeImage(route) {
   return function (props) {
-    // Note: this will break on absolute image references!
+    if (isExternal(props.src))
+      return <img {...props} alt={props.alt} />;
+
     const imageImportPath = combine(routes[route].path, '..', props.src);
-    return <img {...props} src={images[imageImportPath].importedModule} />;
+    const image = images[imageImportPath].importedModule;
+    return <img {...props} alt={props.alt} src={image} />;
   };
+}
+
+function RelativeLink(route) {
+  return function (props) {
+    if (isExternal(props.href))
+      return <a {...props}>{props.children}</a>;
+
+    const relativePath = combine(routes[route].path, '..', props.href);
+    return <Link {...props} to={relativePath}/>;
+  }
 }
 
 function getComponents(route) {
   return {
-    img: MyImage(route)
+    img: RelativeImage(route),
+    a: RelativeLink(route)
   };
 }
 
