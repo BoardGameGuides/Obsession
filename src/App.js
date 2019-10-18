@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 
 const content = {};
-function importAll (r) {
+function importAll(r) {
   r.keys().forEach(key => {
     const route = key.replace(/^\.+/, '').replace(/\.mdx$/, '');
     const contentModule = r(key);
@@ -24,6 +24,7 @@ function importAll (r) {
 importAll(require.context('!babel-loader!mdx-loader!./content/', true, /\.mdx$/));
 
 // TODO: use htmlparser2 and build the index offline during production builds. Only build the index in the browser on dev builds.
+// TODO: make HTML parsing more intelligent: treat <h1> as the title and boost, maybe ignore other headers?
 if (process.env.NODE_ENV !== 'production') {
   function domToText(element) {
     let text = '';
@@ -36,7 +37,7 @@ if (process.env.NODE_ENV !== 'production') {
       }
       if (child.childNodes.length > 0) {
         // Parent nodes
-        text += domToText(child);
+        text += ' ' + domToText(child);
       }
     }
 
@@ -75,7 +76,8 @@ function App() {
                 Edit <code>src/App.js</code> and save to reload.
               </p>
               <p>
-                <Link to="/guests/test">Test link</Link>
+                <Link to="/guests/sara-forbes-bonetta">See Sara</Link>
+                <Link to="/tiles/barn">See Barn</Link>
               </p>
             </header>
           </Route>
