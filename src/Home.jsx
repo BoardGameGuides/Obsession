@@ -10,7 +10,7 @@ function Home() {
         Edit <code>src/App.js</code> and save to reload.
       </p>
       <p>
-        <Link to="/guest/sara-forbes-bonetta">See Sara</Link>
+        <Link to="/guest/casual/sara-forbes-bonetta">See Sara</Link>
       </p>
       <p>
         <Link to="/tile/barn">See Barn</Link>
