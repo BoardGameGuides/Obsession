@@ -8,6 +8,7 @@
 //   - '/' is used as a segment separator *within* the relative path; the relative path may not start or end with '/'.
 // - These methods have no concept of "files"; if there is a segment, it is treated as a directory.
 //   - If you have a path pointing to a file, then to get the directory, combine it with '..'.
+// - As a special case, additional paths passed to `combine` may start with a segment. These paths are treated as though they started with './'.
 
 export function isAbsolute(path) { return path.startsWith('/'); }
 
@@ -53,5 +54,3 @@ export function combine(base, ...others) {
   }
   return result;
 }
-
-export function normalize(path) { return combine('.', path); }
