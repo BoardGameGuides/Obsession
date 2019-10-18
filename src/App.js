@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { Builder } from 'lunr';
 import logo from './logo.svg';
 import './App.css';
 import {
@@ -39,7 +40,7 @@ if (process.env.NODE_ENV !== 'production') {
       }
     }
 
-    return text.replace(/\s+/g, ' ');
+    return text.replace(/\s+/g, ' ').trim();
   }
 
   const domParser = new DOMParser();
@@ -51,10 +52,14 @@ if (process.env.NODE_ENV !== 'production') {
     return domToText(doc);
   }
 
+  const builder = new Builder();
+  builder.field('text');
   for (const route of Object.keys(content)) {
-    content[route].text = plaintext(content[route].Component);
-    console.log(route, content[route].text);
+    const doc = { id: route, text: plaintext(content[route].Component) };
+    console.log(doc);
+    builder.add(doc);
   }
+  window.index = builder.build();
 }
 
 function App() {
