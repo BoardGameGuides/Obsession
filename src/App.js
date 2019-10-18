@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { MDXProvider } from '@mdx-js/react';
 import { Builder } from 'lunr';
+import { combine } from './relativePath';
 import logo from './logo.svg';
 import './App.css';
 import {
@@ -16,7 +17,7 @@ function importAll2(r) {
   r.keys().forEach(key => result[key] = r(key));
   return result;
 }
-console.log(importAll2(require.context('./content/', true, /\.(jpg|png)$/)));
+const images = importAll2(require.context('./content/', true, /\.(jpg|png)$/));
 
 const content = {};
 function importAll(r) {
@@ -85,16 +86,11 @@ if (process.env.NODE_ENV !== 'production') {
   window.index = builder.build();
 }
 
-function convertPath(route, path) {
-  console.log(route, content[route].key, path);
-  console.log(URI(path).absoluteTo(content[route].key));
-}
-
 function MyImage(route) {
-  console.log(route);
   return function (props) {
-    convertPath(route, props.src);
-    return <p>Hi!</p>;
+    // Note: this will break on absolute image references!
+    const imageImportPath = combine(content[route].key, '..', props.src);
+    return <img {...props} src={images[imageImportPath]} />;
   };
 }
 
@@ -118,6 +114,8 @@ function App() {
               </p>
               <p>
                 <Link to="/guests/sara-forbes-bonetta">See Sara</Link>
+              </p>
+              <p>
                 <Link to="/tiles/barn">See Barn</Link>
               </p>
             </header>
