@@ -55,6 +55,9 @@ export default function MdxPage(props) {
     a: RelativeLink(route)
   };
   return (
-    <MDXProvider components={components}>{React.createElement(routes[route].Component)}</MDXProvider>
+    <div>
+      <h1>{routes[route].metadata.title}</h1>
+      <MDXProvider components={components}>{React.createElement(routes[route].Component)}</MDXProvider>
+    </div>
   );
 }
