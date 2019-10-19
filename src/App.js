@@ -6,6 +6,7 @@ import MdxPage from './MdxPage';
 import { routes } from './contentFiles';
 import { index } from './searchIndex';
 
+// @ts-ignore
 window.index = index;
 
 function App() {

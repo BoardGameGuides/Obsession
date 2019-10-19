@@ -7,6 +7,11 @@ function buildIndex() {
   // TODO: use htmlparser2 and build the index offline during production builds. Only build the index in the browser on dev builds.
   // TODO: make HTML parsing more intelligent: treat <h1> as the title and boost, maybe ignore other headers?
   if (process.env.NODE_ENV !== 'production') {
+    /**
+     * Reduces an HTML DOM document to a string.
+     * @param {Node} element The HTML DOM document.
+     * @returns {string}
+     */
     function domToText(element) {
       let text = '';
 
@@ -26,6 +31,11 @@ function buildIndex() {
     }
 
     const domParser = new DOMParser();
+    /**
+     * Reduces a React component to a string.
+     * @param {any} ReactComponent The component to convert.
+     * @returns {string}
+     */
     function plaintext(ReactComponent) {
       const element = React.createElement(ReactComponent);
       const html = ReactDOMServer.renderToString(element);
@@ -33,15 +43,26 @@ function buildIndex() {
       return domToText(doc);
     }
 
+    /**
+     * Applies the specified function to all tokens except ones being indexed for a specified field.
+     * @param {string} fieldName The field to skip the function for.
+     * @param {lunr.PipelineFunction} pipelineFunction The function to wrap.
+     * @returns {lunr.PipelineFunction}
+     */
     function skipField(fieldName, pipelineFunction) {
       return (token, i, tokens) => {
-        if (token.metadata["fields"].indexOf(fieldName) >= 0) {
+        if (/** @type {any} */ (token).metadata.fields.indexOf(fieldName) >= 0) {
           return token;
-        }    
+        }
         return pipelineFunction(token, i, tokens);
       };
     }
 
+    /**
+     * Executes the specified function, and if the function removes or modifies the token, also includes the unmodified token in the result.
+     * @param {lunr.PipelineFunction} pipelineFunction The function to wrap.
+     * @returns {lunr.PipelineFunction}
+     */
     function includeUnmodified(pipelineFunction) {
       return (token, i, tokens) => {
         const result = pipelineFunction(token, i, tokens);
@@ -52,7 +73,7 @@ function buildIndex() {
         if (Array.isArray(result)) {
           // Multiple results from function
           for (const tokenResult of result) {
-            if (tokenResult.str === token.str) {
+            if (tokenResult.toString() === token.toString()) {
               // One token matches -> return results from function
               return result;
             }
@@ -62,7 +83,7 @@ function buildIndex() {
           return result;
         }
         // Single result from function
-        if (result.str === token.str) {
+        if (result.toString() === token.toString()) {
           // Result matches token -> return result from function
           return result;
         }
@@ -71,7 +92,7 @@ function buildIndex() {
       };
     }
 
-    // TODO: determine if we want a simplified stopword filter.
+    // TODO: determine if we want a simplified stop-word filter.
     const builder = new Builder();
     builder.pipeline.add(trimmer, skipField('title', stemmer));
     builder.searchPipeline.add(includeUnmodified(stemmer));

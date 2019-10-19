@@ -10,10 +10,17 @@
 //   - If you have a path pointing to a file, then to get the directory, combine it with '..'.
 // - As a special case, additional paths passed to `combine` may start with a segment. These paths are treated as though they started with './'.
 
+/**
+ * Whether this path is absolute.
+ * @param {string} path
+ * @returns {boolean}
+ */
 export function isAbsolute(path) { return path.startsWith('/'); }
 
-export function isRelative(path) { return !isAbsolute(path); }
-
+/**
+ * Given a path, returns the parent of that path. If the path is an absolute root path `/`, then `/` is returned.
+ * @param {string} path 
+ */
 function pathParent(path) {
   if (path.startsWith('..')) {
     return '../' + path;
@@ -34,6 +41,11 @@ function pathParent(path) {
   return path.substring(0, index);
 }
 
+/**
+ * Combines one or more paths into a single path.
+ * @param {string} base The path to start from; this must be an absolute or relative path (i.e., start with `/` or `.`).
+ * @param  {...string} others The paths to combine. These may be paths starting with a segment, which are treated as relative paths.
+ */
 export function combine(base, ...others) {
   let result = base;
   for (const next of others) {
