@@ -21,10 +21,14 @@ export const routes = {};
 for (const path in pages) {
   // Trim leading '.' characters and ending '.mdx'
   const route = path.replace(/^\.+/, '').replace(/\.mdx$/, '');
+  const metadata = pages[path].importedModule.frontMatter;
+  if (!metadata.title) {
+    console.log('Mdx file missing title', path);
+  }
   routes[route] = {
     path,
     route,
     Component: pages[path].importedModule.default,
-    metadata: pages[path].importedModule.frontMatter
+    metadata
   };
 }
