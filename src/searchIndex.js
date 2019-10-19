@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { Builder } from 'lunr';
+import { Builder, trimmer, stopWordFilter, stemmer } from 'lunr';
 import { routes } from './contentFiles';
 
 function buildIndex() {
@@ -33,8 +33,49 @@ function buildIndex() {
       return domToText(doc);
     }
 
-    // TODO: fix pipeline defaults.
+    function skipField(fieldName, pipelineFunction) {
+      return (token, i, tokens) => {
+        if (token.metadata["fields"].indexOf(fieldName) >= 0) {
+          return token;
+        }    
+        return pipelineFunction(token, i, tokens);
+      };
+    }
+
+    function includeUnmodified(pipelineFunction) {
+      return (token, i, tokens) => {
+        const result = pipelineFunction(token, i, tokens);
+        if (!result) {
+          // No result -> return original token
+          return token;
+        }
+        if (Array.isArray(result)) {
+          // Multiple results from function
+          for (const tokenResult of result) {
+            if (tokenResult.str === token.str) {
+              // One token matches -> return results from function
+              return result;
+            }
+          }
+          // No token matches -> add original token to results from function
+          result.push(token);
+          return result;
+        }
+        // Single result from function
+        if (result.str === token.str) {
+          // Result matches token -> return result from function
+          return result;
+        }
+        // Result does not match -> return result from function with original token
+        return [result, token];
+      };
+    }
+
+    // TODO: determine if we want a simplified stopword filter.
     const builder = new Builder();
+    builder.pipeline.add(trimmer, skipField('title', stemmer));
+    builder.searchPipeline.add(includeUnmodified(stemmer));
+
     builder.field('title');
     builder.field('text');
 
