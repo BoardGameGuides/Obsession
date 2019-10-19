@@ -39,7 +39,7 @@ function RelativeLink(route) {
     if (isExternal(props.href))
       return <a {...props}>{props.children}</a>;
 
-    const relativePath = combine(routes[route].path, '..', props.href);
+    const relativePath = combine(route, '..', props.href);
     return <Link {...props} to={relativePath} />;
   }
 }

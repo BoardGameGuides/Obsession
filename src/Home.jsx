@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import logo from './logo.svg';
+import { routes } from './contentFiles';
 
 function Home() {
   return (
@@ -9,12 +10,7 @@ function Home() {
       <p>
         Edit <code>src/App.js</code> and save to reload.
       </p>
-      <p>
-        <Link to="/guest/casual/sara-forbes-bonetta">See Sara</Link>
-      </p>
-      <p>
-        <Link to="/tile/barn">See Barn</Link>
-      </p>
+      {Object.keys(routes).map(route => <p key={route}><Link to={route}>{routes[route].metadata.title}</Link></p>)}
     </header>
   );
 }
