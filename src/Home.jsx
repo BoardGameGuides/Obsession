@@ -1,12 +1,18 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { routes } from './contentFiles';
 
 function Home() {
   return (
-    <header>
-      {Object.keys(routes).map(route => <p key={route}><Link to={route}>{routes[route].displayTitle}</Link></p>)}
-    </header>
+    <div>
+      <p>
+        Welcome to the Obsession game guide!
+      </p>
+      <p>
+        Eventually, the guide will have more info. Maybe a table of contents, too.
+      </p>
+      <p>
+        For now, you can search the articles using the search box at the top of the page.
+      </p>
+    </div>
   );
 }
 

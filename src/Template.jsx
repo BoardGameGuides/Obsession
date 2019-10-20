@@ -13,8 +13,7 @@ export default class Template extends React.Component {
     this.handleBlur = this.handleBlur.bind(this);
   }
 
-  handleChange(event) {
-    const query = event.target.value;
+  search(query) {
     let results = index.search(query).map(x => x.ref);
     if (results.length === 0) {
       results = index.search(query + '*').map(x => x.ref);
@@ -23,24 +22,30 @@ export default class Template extends React.Component {
     this.setState({query, results});
   }
 
+  handleChange(event) {
+    this.search(event.target.value);
+  }
+
   handleFocus() {
     this.setState({focused: true});
+    this.search('');
   }
 
   handleBlur() {
-    this.setState({focused: false});
+    this.setState({query: '', focused: false});
   }
 
   render() {
     return (
       <div>
         <div className="page-header">
-          <input type="text" value={this.state.query} onChange={this.handleChange} onFocus={this.handleFocus} onBlur={this.handleBlur} placeholder="Search..." />
+          <input type="text" value={this.state.query} onChange={this.handleChange} onFocus={this.handleFocus} placeholder="Search..." />
+          { this.state.focused ? <button onClick={this.handleBlur}>X</button> : null }
         </div>
         <div className="page-body">
           {
             this.state.focused ?
-                <div>{this.state.results.map(route => <div key={route}><Link to={route}>{routes[route].displayTitle}</Link></div>)}</div> :
+                <div>{this.state.results.map(route => <div key={route}><Link to={route} replace={this.props.route === route} onClick={this.handleBlur}>{routes[route].displayTitle}</Link></div>)}</div> :
                 <div>{this.props.children}</div>
           }
         </div>
