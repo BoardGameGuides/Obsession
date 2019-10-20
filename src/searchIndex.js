@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { Builder, Pipeline, trimmer, stopWordFilter, stemmer } from 'lunr';
+import { Builder, Pipeline, trimmer, stemmer } from 'lunr';
 import { routes } from './contentFiles';
 
 /**
@@ -60,7 +60,8 @@ Pipeline.registerFunction(stemAndPreserve, 'stemAndPreserve');
 function buildIndex() {
   // TODO: use htmlparser2 and build the index offline during production builds. Only build the index in the browser on dev builds.
   // TODO: make HTML parsing more intelligent: treat <h1> as the title and boost, maybe ignore other headers?
-  if (process.env.NODE_ENV !== 'production') {
+  if (true) {
+  //if (process.env.NODE_ENV !== 'production') {
     /**
      * Reduces an HTML DOM document to a string.
      * @param {Node} element The HTML DOM document.
