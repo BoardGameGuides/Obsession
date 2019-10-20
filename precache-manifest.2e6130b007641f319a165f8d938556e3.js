@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "3f5c0cd0b40f10112a021060baa0a6c1",
+    "revision": "1f0ea9ccd36b15fc0ca55fae482ffe04",
     "url": "/Obsession/index.html"
   },
   {
-    "revision": "b548e103f220559616ea",
+    "revision": "040d76824de56ae79e35",
     "url": "/Obsession/static/css/main.b9b28da3.chunk.css"
   },
   {
-    "revision": "04bb99889fc3571c20c0",
-    "url": "/Obsession/static/js/2.b54077dc.chunk.js"
+    "revision": "5792d03c6355dce46344",
+    "url": "/Obsession/static/js/2.783e5e8a.chunk.js"
   },
   {
-    "revision": "b548e103f220559616ea",
-    "url": "/Obsession/static/js/main.d520fc1b.chunk.js"
+    "revision": "040d76824de56ae79e35",
+    "url": "/Obsession/static/js/main.b29a241d.chunk.js"
   },
   {
     "revision": "53748e60acbe3a465915",
