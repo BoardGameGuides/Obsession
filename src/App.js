@@ -4,6 +4,7 @@ import './App.css';
 import Home from './Home';
 import MdxPage from './MdxPage';
 import ScrollToTop from './ScrollToTop';
+import Template from './Template';
 import { routes } from './contentFiles';
 import { index } from './searchIndex';
 
@@ -16,9 +17,9 @@ function App() {
       <Router>
         <ScrollToTop />
         <Switch>
-          {Object.keys(routes).map(route => <Route exact path={route} key={route}><MdxPage route={route} /></Route>)}
+          {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template><MdxPage route={route} /></Template></Route>)}
           <Route path="/">
-            <Home />
+            <Template><Home /></Template>
           </Route>
         </Switch>
       </Router>
