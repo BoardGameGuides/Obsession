@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1f0ea9ccd36b15fc0ca55fae482ffe04",
+    "revision": "81d0d7a1d7ef6e76473fbe21b3a000e1",
     "url": "/Obsession/index.html"
   },
   {
-    "revision": "040d76824de56ae79e35",
+    "revision": "31ceb8c5163d417c18fe",
     "url": "/Obsession/static/css/main.b9b28da3.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/Obsession/static/js/2.783e5e8a.chunk.js"
   },
   {
-    "revision": "040d76824de56ae79e35",
-    "url": "/Obsession/static/js/main.b29a241d.chunk.js"
+    "revision": "31ceb8c5163d417c18fe",
+    "url": "/Obsession/static/js/main.6494a492.chunk.js"
   },
   {
     "revision": "53748e60acbe3a465915",
