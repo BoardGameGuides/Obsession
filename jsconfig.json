@@ -1,5 +1,9 @@
 {
     "compilerOptions": {
+        "checkJs": true,
+        "jsx": "preserve",
+        "target": "es2019",
+        "moduleResolution": "node",
         "resolveJsonModule": true
     }
 }

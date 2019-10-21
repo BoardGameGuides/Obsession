@@ -1,14 +1,14 @@
 import { Pipeline, stemmer } from 'lunr';
 
 /**
- * Applies the specified function to all tokens except ones being indexed for a specified field.
+ * Applies the specified function to all tokens but only if it's being indexed for a specified field.
  * @param {string} fieldName The field to skip the function for.
  * @param {lunr.PipelineFunction} pipelineFunction The function to wrap.
  * @returns {lunr.PipelineFunction}
  */
-function skipField(fieldName, pipelineFunction) {
+function onlyField(fieldName, pipelineFunction) {
   return (token, i, tokens) => {
-    if (/** @type {any} */ (token).metadata.fields.indexOf(fieldName) >= 0) {
+    if (/** @type {any} */ (token).metadata.fields.indexOf(fieldName) === -1) {
       return token;
     }
     return pipelineFunction(token, i, tokens);
@@ -49,7 +49,7 @@ function includeUnmodified(pipelineFunction) {
   };
 }
 
-export const stemExceptTitle = skipField('title', stemmer);
+export const stemText = onlyField('text', stemmer);
 export const stemAndPreserve = includeUnmodified(stemmer);
-Pipeline.registerFunction(stemExceptTitle, 'stemExceptTitle');
+Pipeline.registerFunction(stemText, 'stemText');
 Pipeline.registerFunction(stemAndPreserve, 'stemAndPreserve');
