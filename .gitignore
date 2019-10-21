@@ -11,6 +11,9 @@
 # production
 /build
 
+# intermediate build files
+/src/obj
+
 # misc
 .DS_Store
 .env.local
