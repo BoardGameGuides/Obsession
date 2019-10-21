@@ -36,10 +36,23 @@ function displayTitle(title, route) {
 }
 
 /**
+ * Gets the type of an MDX file.
+ * @param {string} route The route to the MDX file.
+ */
+function type(route) {
+  let index = route.indexOf('/', 2);
+  if (index === -1) {
+    index = route.length;
+  }
+  return route.substring(1, index);
+}
+
+/**
  * @typedef Route An imported MDX file that has a route.
  * @property {string} path The relative path to the file.
  * @property {string} route The (computed) route for the file.
  * @property {string} displayTitle The fully descriptive title to display for the file.
+ * @property {string} type The type of content described by the file.
  * @property {any} Component The MDX file, as a React component.
  * @property {any} metadata The metadata for this file (from the front matter).
  */
@@ -55,6 +68,7 @@ for (const path in pages) {
     route,
     Component: pages[path].importedModule.default,
     displayTitle: displayTitle(metadata.title, route),
+    type: type(route),
     metadata
   };
 }

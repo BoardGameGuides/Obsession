@@ -116,7 +116,7 @@ function buildIndex() {
       const doc = Object.assign(routes[route].metadata, {
         id: route,
         text: plaintext(routes[route].Component),
-        type: route.startsWith('/guests') ? 'guest' : 'tile'
+        type: routes[route].type
       });
       builder.add(doc);
     }
