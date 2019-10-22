@@ -1,5 +1,5 @@
-import { Pipeline, stemmer } from 'lunr';
-import { unstemmedPipelineFunctions } from '../src/shared/searchSettings';
+import { Pipeline, Token } from 'lunr';
+import { unstemmedPipelineFunctions, pipelineFunctions } from '../src/shared/searchSettings';
 
 /**
  * @param {string} text
@@ -12,7 +12,8 @@ export function frequency(text, ...pipelineFunctions) {
   const pipeline = new Pipeline();
   pipeline.add(...pipelineFunctions);
   for (const word of text.split(' ').filter(x => x)) {
-    const pipelineResult = pipeline.runString(word);
+    const token = new Token(word, { fields: ['text'] });
+    const pipelineResult = pipeline.run([token]).map(x => x.toString());
     for (const trimmedWord of pipelineResult) {
       if (trimmedWord in result) {
         result[trimmedWord] = result[trimmedWord] + 1;
@@ -31,7 +32,8 @@ export function sanityCheck(text) {
   const pipeline = new Pipeline();
   pipeline.add(...unstemmedPipelineFunctions);
   for (const word of text.split(' ').filter(x => x)) {
-    for (const result of pipeline.runString(word)) {
+    const token = new Token(word, { fields: ['text'] });
+    for (const result of pipeline.run([token]).map(x => x.toString())) {
       if (result.match(/[^A-Za-z0-9]/)) {
         console.log('WARN: Word has symbols', word, result);
       } else if (result === '') {
@@ -51,4 +53,4 @@ export function wordFrequency(text) { return frequency(text, ...unstemmedPipelin
  * @param {string} text
  * @returns {{[key: string]: number}}
  */
-export function stemmedFrequency(text) { return frequency(text, ...unstemmedPipelineFunctions, stemmer); }
+export function stemmedFrequency(text) { return frequency(text, ...pipelineFunctions); }

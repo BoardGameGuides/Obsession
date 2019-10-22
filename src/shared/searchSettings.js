@@ -1,4 +1,4 @@
-import { Pipeline, stemmer, trimmer } from 'lunr';
+import { Pipeline, stemmer, trimmer, generateStopWordFilter } from 'lunr';
 
 /**
  * Applies the specified function to all tokens but only if it's being indexed for a specified field.
@@ -98,6 +98,8 @@ function filterEmpty(token) {
 
 const stemText = onlyField('text', stemmer);
 const stemAndPreserve = includeUnmodified(stemmer);
+const stopWords = onlyField('text', generateStopWordFilter(['a', 'an', 'and', 'are', 'as', 'by', 'for', 'from', 'in', 'is', 'of', 'on', 'or', 'that', 'the', 'to', 'was', 'when', 'with']));
+
 Pipeline.registerFunction(stemText, 'stemText');
 Pipeline.registerFunction(stemAndPreserve, 'stemAndPreserve');
 Pipeline.registerFunction(dumbQuotes, 'dumbQuotes');
@@ -105,7 +107,8 @@ Pipeline.registerFunction(caseFold, 'caseFold');
 Pipeline.registerFunction(trimPossessive, 'trimPossessive');
 Pipeline.registerFunction(splitOnSymbols, 'splitOnSymbols');
 Pipeline.registerFunction(filterEmpty, 'filterEmpty');
+Pipeline.registerFunction(stopWords, 'stopWords');
 
-export const unstemmedPipelineFunctions = [dumbQuotes, caseFold, trimPossessive, trimmer, splitOnSymbols, filterEmpty];
+export const unstemmedPipelineFunctions = [dumbQuotes, caseFold, trimPossessive, trimmer, splitOnSymbols, filterEmpty, stopWords];
 export const pipelineFunctions = [...unstemmedPipelineFunctions, stemText];
 export const searchPipelineFunctions = [...unstemmedPipelineFunctions, stemAndPreserve];
