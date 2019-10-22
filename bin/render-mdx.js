@@ -40,7 +40,7 @@ function transform(code) {
 }
 
 /**
- * Renders the MDX file to a plain-text string with frontmatter.
+ * Renders the MDX file to an HTML string with frontmatter.
  * @param {string} mdxFile
  * @returns {Promise<{frontmatter: {}, html: string}>}
  */
