@@ -1,4 +1,4 @@
-import { Pipeline, stemmer } from 'lunr';
+import { Pipeline, stemmer, trimmer } from 'lunr';
 
 /**
  * Applies the specified function to all tokens but only if it's being indexed for a specified field.
@@ -49,7 +49,63 @@ function includeUnmodified(pipelineFunction) {
   };
 }
 
-export const stemText = onlyField('text', stemmer);
-export const stemAndPreserve = includeUnmodified(stemmer);
+/** @type {lunr.PipelineFunction} */
+function dumbQuotes(token) {
+  const str = token.toString();
+  if (!str.match(/[\u2018\u2019\u201C\u201D]/)) {
+    return token;
+  }
+  return token.update(x => x.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"'));
+}
+
+/** @type {lunr.PipelineFunction} */
+function caseFold(token) {
+  const str = token.toString();
+  if (!str.match(/[A-Z]/)) {
+    return token;
+  }
+  return token.update(x => x.toLowerCase());
+}
+
+/** @type {lunr.PipelineFunction} */
+function trimPossessive(token) {
+  // The stemmer doesn't implement Step 0 of Porter; this is left to the trimmer.
+  // The trimmer doesn't support words ending in "'s".
+  const str = token.toString();
+  if (str.length <= 2 || !str.match(/'s$/)) {
+    return token;
+  }
+  return token.update(x => x.replace(/'s$/, ''));
+}
+
+/** @type {lunr.PipelineFunction} */
+function splitOnSymbols(token) {
+  const str = token.toString();
+  if (!str.match(/[^A-Za-z0-9]/)) {
+    return token;
+  }
+  return str.split(/[^A-Za-z0-9]/).filter(x => x).map(x => token.clone(() => x));
+}
+
+/** @type {lunr.PipelineFunction} */
+function filterEmpty(token) {
+  const str = token.toString();
+  if (str === '') {
+    return void 0;
+  }
+  return token;
+}
+
+const stemText = onlyField('text', stemmer);
+const stemAndPreserve = includeUnmodified(stemmer);
 Pipeline.registerFunction(stemText, 'stemText');
 Pipeline.registerFunction(stemAndPreserve, 'stemAndPreserve');
+Pipeline.registerFunction(dumbQuotes, 'dumbQuotes');
+Pipeline.registerFunction(caseFold, 'caseFold');
+Pipeline.registerFunction(trimPossessive, 'trimPossessive');
+Pipeline.registerFunction(splitOnSymbols, 'splitOnSymbols');
+Pipeline.registerFunction(filterEmpty, 'filterEmpty');
+
+export const unstemmedPipelineFunctions = [dumbQuotes, caseFold, trimPossessive, trimmer, splitOnSymbols, filterEmpty];
+export const pipelineFunctions = [...unstemmedPipelineFunctions, stemText];
+export const searchPipelineFunctions = [...unstemmedPipelineFunctions, stemAndPreserve];

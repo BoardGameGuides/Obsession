@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { renderToPlainText } from './render-mdx';
 import { buildIndex } from './indexer';
-import { frequency } from './frequency';
+import { wordFrequency, stemmedFrequency, sanityCheck } from './frequency';
 
 /**
  * Gets the type of an MDX file.
@@ -35,6 +35,15 @@ async function walk(dir) {
   return result;
 };
 
+/**
+ * @param {string} filename 
+ * @param {{[key: string]: number}} data 
+ */
+async function saveFrequency(filename, data) {
+  const wordFrequencies = Object.keys(data).map(x => ({ word: x, frequency: data[x] })).sort((x, y) => y.frequency - x.frequency);
+  await fs.promises.writeFile(filename, wordFrequencies.map(x => x.word + ' ' + x.frequency).join('\n'));
+}
+
 (async () => {
   const paths = (await walk('src/content/')).filter(x => x.endsWith('.mdx'));
   const docs = [];
@@ -55,8 +64,8 @@ async function walk(dir) {
   const index = buildIndex(docs);
   await fs.promises.writeFile('src/obj/searchIndex.json', JSON.stringify(index));
   
-  // Perform frequency analysis of trimmed words.
-  const frequencyAnalysis = frequency(allText);
-  const wordFrequencies = Object.keys(frequencyAnalysis).map(x => ({ word: x, frequency: frequencyAnalysis[x] })).sort((x, y) => y.frequency - x.frequency);
-  await fs.promises.writeFile('src/obj/words.txt', wordFrequencies.map(x => x.word + ' ' + x.frequency).join('\n'));
+  // Perform frequency analysis of words and sanity checks.
+  await saveFrequency('src/obj/words.txt', wordFrequency(allText));
+  await saveFrequency('src/obj/words.stemmed.txt', stemmedFrequency(allText));
+  sanityCheck(allText);
 })();

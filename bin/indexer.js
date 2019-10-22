@@ -1,5 +1,5 @@
-import { Builder, trimmer } from 'lunr';
-import { stemAndPreserve, stemText } from '../src/shared/searchSettings';
+import { Builder } from 'lunr';
+import { pipelineFunctions, searchPipelineFunctions } from '../src/shared/searchSettings';
 
 /**
  * Builds an index.
@@ -8,8 +8,8 @@ import { stemAndPreserve, stemText } from '../src/shared/searchSettings';
 export function buildIndex(files) {
   // TODO: determine if we want a simplified stop-word filter.
   const builder = new Builder();
-  builder.pipeline.add(trimmer, stemText);
-  builder.searchPipeline.add(stemAndPreserve);
+  builder.pipeline.add(...pipelineFunctions);
+  builder.searchPipeline.add(...searchPipelineFunctions);
 
   builder.field('title');
   builder.field('text');
