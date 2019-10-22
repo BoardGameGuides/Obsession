@@ -14,10 +14,7 @@ export default class Template extends React.Component {
   }
 
   search(query) {
-    let results = index.search(query).map(x => '/' + x.ref);
-    if (results.length === 0) {
-      results = index.search(query + '*').map(x => '/' + x.ref);
-    }
+    const results = index.search(query + '*').map(x => '/' + x.ref);
     console.log(results);
     this.setState({query, results});
   }

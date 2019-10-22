@@ -11,7 +11,7 @@ export function buildIndex(files) {
   builder.pipeline.add(...pipelineFunctions);
   builder.searchPipeline.add(...searchPipelineFunctions);
 
-  builder.field('title');
+  builder.field('title', { boost: 1.5 });
   builder.field('text');
 
   // TODO: auto-add fields found in metadata as space-delimited exact-match tokens.
