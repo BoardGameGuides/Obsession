@@ -5,11 +5,8 @@ import Home from './Home';
 import MdxPage from './MdxPage';
 import ScrollToTop from './ScrollToTop';
 import Template from './Template';
+import Search from './Search';
 import { routes } from './contentFiles';
-import { index } from './searchIndex';
-
-// @ts-ignore
-window.index = index;
 
 function App() {
   return (
@@ -18,6 +15,9 @@ function App() {
         <ScrollToTop />
         <Switch>
           {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template route={route}><MdxPage route={route} /></Template></Route>)}
+          <Route path="/search">
+            <Search/>
+          </Route>
           <Route path="/">
             <Template route="/"><Home /></Template>
           </Route>
