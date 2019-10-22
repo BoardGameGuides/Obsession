@@ -3,9 +3,9 @@ import { pipelineFunctions, searchPipelineFunctions } from '../src/shared/search
 
 /**
  * Builds an index.
- * @param {{id: string, type: string, text: string, metadata: {}}[]} files The files to index.
+ * @param {{id: string, text: string, title: string}[]} docs The documents to index.
  */
-export function buildIndex(files) {
+export function buildIndex(docs) {
   const builder = new Builder();
   builder.pipeline.add(...pipelineFunctions);
   builder.searchPipeline.add(...searchPipelineFunctions);
@@ -13,12 +13,7 @@ export function buildIndex(files) {
   builder.field('title', { boost: 1.5 });
   builder.field('text');
 
-  for (const file of files) {
-    const doc = Object.assign(file.metadata, {
-      id: file.id,
-      text: file.text,
-      type: file.type
-    });
+  for (const doc of docs) {
     builder.add(doc);
   }
 
