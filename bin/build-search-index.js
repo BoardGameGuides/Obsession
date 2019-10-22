@@ -1,12 +1,9 @@
 import { promises as fs } from 'fs';
+import { Parser } from 'htmlparser2';
 import { renderToHtmlAsync } from './render-mdx';
 import { buildIndex } from './indexer';
 import { wordFrequency, stemmedFrequency, sanityCheck } from './frequency';
-import { Parser } from 'htmlparser2';
-
-// TODO: convert pound symbol to "pounds" text (with whitespace) when converting html to plain-text. Put this into /src/shared/game-specific/
-// TODO: convert numbers to text (e.g., "100" to "one hundred") using number-to-words. This should be as a lunr pipeline function in both pipelines.
-// TODO: support thesaurus in pipeline: "money" === "pounds". Put this into /src/shared/game-specific/
+import textTransform from '../src/shared/game-specific/build-search-index-text-transform';
 
 /**
  * Walks a directory tree.
@@ -56,7 +53,7 @@ function mdxToDoc(id, mdxFile) {
   }, { decodeEntities: true });
   parser.write(mdxFile.html);
   parser.end();
-  const text = textResult.replace(/\s+/g, ' ').trim();
+  const text = textTransform(textResult).replace(/\s+/g, ' ').trim();
   return { id, text, title: mdxFile.frontmatter.title };
 }
 

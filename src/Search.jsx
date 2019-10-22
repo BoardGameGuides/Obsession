@@ -3,6 +3,7 @@ import { parse, stringify } from 'query-string';
 import { Link, withRouter } from 'react-router-dom';
 import { index } from './searchIndex';
 import { routes } from './contentFiles';
+import { numberToWords } from './shared/searchSettings';
 
 class Search extends React.Component {
   constructor(props) {
@@ -14,14 +15,36 @@ class Search extends React.Component {
 
   requestedQuery() {
     const uriParameters = parse(this.props.location.search);
-    return uriParameters.q || '';
+    return (/** @type {string} */ (uriParameters.q) || '').trim();
   }
 
+  /**
+   * @param {string} query 
+   */
   search(query) {
     if (query !== this.requestedQuery()) {
       this.props.history.replace({ search: '?' + stringify({ q: query })});
     }
-    const results = index.search(query + '*').map(x => '/' + x.ref);
+
+    // Handle numeric searches specially:
+    // - Boost the number. If "10" is in the document, that's a very high match.
+    // - Require the equivalent words. Allows "10" to match "ten".
+    let expandedQuery = query;
+    let isNumeric = false;
+    if (query.match(/^[0-9]+$/)) {
+      isNumeric = true;
+      expandedQuery = query + '^2 ' + numberToWords(query).map(x => '+' + x).join(' ');
+    }
+
+    // In lunr, wildcards prevent the search pipeline from executing. So always try a non-wildcard search first.
+    console.log('Searching', expandedQuery);
+    let queryResults = index.search(expandedQuery);
+    if (queryResults.length === 0 && !isNumeric) {
+      expandedQuery = query + '*';
+      console.log('Searching', expandedQuery);
+      queryResults = index.search(expandedQuery);
+    }
+    const results = queryResults.map(x => '/' + x.ref);
     console.log(results);
     this.setState({query, results});
   }

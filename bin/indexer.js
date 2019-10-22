@@ -1,5 +1,5 @@
 import { Builder } from 'lunr';
-import { pipelineFunctions, searchPipelineFunctions } from '../src/shared/searchSettings';
+import { buildPipelineFunctions, searchPipelineFunctions } from '../src/shared/searchSettings';
 
 /**
  * Builds an index.
@@ -7,7 +7,7 @@ import { pipelineFunctions, searchPipelineFunctions } from '../src/shared/search
  */
 export function buildIndex(docs) {
   const builder = new Builder();
-  builder.pipeline.add(...pipelineFunctions);
+  builder.pipeline.add(...buildPipelineFunctions);
   builder.searchPipeline.add(...searchPipelineFunctions);
 
   builder.field('title', { boost: 1.5 });

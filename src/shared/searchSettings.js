@@ -1,4 +1,6 @@
 import { Pipeline, stemmer, trimmer, generateStopWordFilter } from 'lunr';
+import { toWords } from 'number-to-words';
+import searchThesaurus from './game-specific/search-thesaurus';
 
 /**
  * Applies the specified function to all tokens but only if it's being indexed for a specified field.
@@ -49,6 +51,23 @@ function includeUnmodified(pipelineFunction) {
   };
 }
 
+/**
+ * Creates a pipeline function that performs word replacement using a thesaurus.
+ * This function should only be used when building the index.
+ * @param {{[original: string]: string[]}} wordMapping 
+ * @returns {lunr.PipelineFunction}
+ */
+function generateThesaurus(wordMapping) {
+  return token => {
+    const str = token.toString();
+    if (str in wordMapping) {
+      const synonyms = wordMapping[str];
+      return [token, ...synonyms.map(word => token.clone(() => word))];
+    }
+    return token;
+  }
+}
+
 /** @type {lunr.PipelineFunction} */
 function dumbQuotes(token) {
   const str = token.toString();
@@ -81,24 +100,43 @@ function trimPossessive(token) {
 /** @type {lunr.PipelineFunction} */
 function splitOnSymbols(token) {
   const str = token.toString();
-  if (!str.match(/[^A-Za-z0-9]/)) {
+  if (!str.match(/[-/]/)) {
     return token;
   }
-  return str.split(/[^A-Za-z0-9]/).filter(x => x).map(x => token.clone(() => x));
+  return str.split(/[-/]/).filter(x => x).map(x => token.clone(() => x));
 }
 
 /** @type {lunr.PipelineFunction} */
 function filterEmpty(token) {
   const str = token.toString();
-  if (str === '') {
-    return void 0;
+  if (str !== '') {
+    return token;
   }
-  return token;
+  return void 0;
+}
+
+/**
+ * Converts a string representation of a number to a text description of a number.
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function numberToWords(text) {
+  return toWords(parseInt(text, 10)).replace(/[-,]/g, ' ').split(' ').filter(x => x);
+}
+
+/** @type {lunr.PipelineFunction} */
+function numbersToWords(token) {
+  const str = token.toString();
+  if (!str.match(/^[0-9]+$/)) {
+    return token;
+  }
+  return [token, ...numberToWords(str).map(x => token.clone(() => x))];
 }
 
 const stemText = onlyField('text', stemmer);
 const stemAndPreserve = includeUnmodified(stemmer);
 const stopWords = onlyField('text', generateStopWordFilter(['a', 'an', 'and', 'are', 'as', 'by', 'for', 'from', 'in', 'is', 'of', 'on', 'or', 'that', 'the', 'to', 'was', 'when', 'with']));
+const thesaurus = generateThesaurus(searchThesaurus);
 
 Pipeline.registerFunction(stemText, 'stemText');
 Pipeline.registerFunction(stemAndPreserve, 'stemAndPreserve');
@@ -108,7 +146,20 @@ Pipeline.registerFunction(trimPossessive, 'trimPossessive');
 Pipeline.registerFunction(splitOnSymbols, 'splitOnSymbols');
 Pipeline.registerFunction(filterEmpty, 'filterEmpty');
 Pipeline.registerFunction(stopWords, 'stopWords');
+Pipeline.registerFunction(thesaurus, 'thesaurus');
+Pipeline.registerFunction(numbersToWords, 'numbersToWords');
 
-export const unstemmedPipelineFunctions = [dumbQuotes, caseFold, trimPossessive, trimmer, splitOnSymbols, filterEmpty, stopWords];
-export const pipelineFunctions = [...unstemmedPipelineFunctions, stemText];
-export const searchPipelineFunctions = [...unstemmedPipelineFunctions, stemAndPreserve];
+/** The pipeline functions applied to both build and search pipelines. No thesaurus or stemming is done. */
+const sharedPipelineFunctions = [dumbQuotes, caseFold, trimPossessive, trimmer, splitOnSymbols, filterEmpty, stopWords];
+
+/** The pipeline functions applied to the build pipeline. */
+export const buildPipelineFunctions = [...sharedPipelineFunctions, numbersToWords, thesaurus, stemText];
+
+/** The pipeline functions applied to the search pipeline. */
+export const searchPipelineFunctions = [...sharedPipelineFunctions, stemAndPreserve];
+
+/** The pipeline functions applied to the build pipeline, with thesaurus removed. */
+export const buildPipelineFunctionsExceptThesaurus = buildPipelineFunctions.filter(x => x !== thesaurus);
+
+/** The pipeline functions applied to the build pipeline, with thesaurus and stemming removed. */
+export const buildPipelineFunctionsExceptThesaurusAndStemming = buildPipelineFunctions.filter(x => x !== thesaurus && x !== stemText);

@@ -1,5 +1,5 @@
 import { Pipeline, Token } from 'lunr';
-import { unstemmedPipelineFunctions, pipelineFunctions } from '../src/shared/searchSettings';
+import { buildPipelineFunctionsExceptThesaurus, buildPipelineFunctionsExceptThesaurusAndStemming } from '../src/shared/searchSettings';
 
 /**
  * Runs a word through a pipeline as though it were in the 'text' field.
@@ -41,7 +41,7 @@ function frequency(words, ...pipelineFunctions) {
  */
 export function sanityCheck(words) {
   const pipeline = new Pipeline();
-  pipeline.add(...unstemmedPipelineFunctions);
+  pipeline.add(...buildPipelineFunctionsExceptThesaurusAndStemming);
   for (const word of words) {
     for (const result of runPipeline(pipeline, word)) {
       if (result.match(/[^A-Za-z0-9]/)) {
@@ -57,10 +57,10 @@ export function sanityCheck(words) {
  * @param {string[]} words
  * @returns {{[key: string]: number}}
  */
-export function wordFrequency(words) { return frequency(words, ...unstemmedPipelineFunctions); }
+export function wordFrequency(words) { return frequency(words, ...buildPipelineFunctionsExceptThesaurusAndStemming); }
 
 /**
  * @param {string[]} words
  * @returns {{[key: string]: number}}
  */
-export function stemmedFrequency(words) { return frequency(words, ...pipelineFunctions); }
+export function stemmedFrequency(words) { return frequency(words, ...buildPipelineFunctionsExceptThesaurus); }
