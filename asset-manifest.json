@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/Obsession/static/css/main.b9b28da3.chunk.css",
-    "main.js": "/Obsession/static/js/main.92242d05.chunk.js",
-    "main.js.map": "/Obsession/static/js/main.92242d05.chunk.js.map",
+    "main.js": "/Obsession/static/js/main.680e85a8.chunk.js",
+    "main.js.map": "/Obsession/static/js/main.680e85a8.chunk.js.map",
     "runtime-main.js": "/Obsession/static/js/runtime-main.08c13e2b.js",
     "runtime-main.js.map": "/Obsession/static/js/runtime-main.08c13e2b.js.map",
-    "static/js/2.ec296a9f.chunk.js": "/Obsession/static/js/2.ec296a9f.chunk.js",
-    "static/js/2.ec296a9f.chunk.js.map": "/Obsession/static/js/2.ec296a9f.chunk.js.map",
+    "static/js/2.5d8fb592.chunk.js": "/Obsession/static/js/2.5d8fb592.chunk.js",
+    "static/js/2.5d8fb592.chunk.js.map": "/Obsession/static/js/2.5d8fb592.chunk.js.map",
     "index.html": "/Obsession/index.html",
-    "precache-manifest.cfe66964922ffa02249e01869315a177.js": "/Obsession/precache-manifest.cfe66964922ffa02249e01869315a177.js",
+    "precache-manifest.2535790287e1b9bf510a460ce43cb4b6.js": "/Obsession/precache-manifest.2535790287e1b9bf510a460ce43cb4b6.js",
     "service-worker.js": "/Obsession/service-worker.js",
     "static/css/main.b9b28da3.chunk.css.map": "/Obsession/static/css/main.b9b28da3.chunk.css.map",
     "static/media/barn.png": "/Obsession/static/media/barn.21e69e57.png",
@@ -16,8 +16,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.08c13e2b.js",
-    "static/js/2.ec296a9f.chunk.js",
+    "static/js/2.5d8fb592.chunk.js",
     "static/css/main.b9b28da3.chunk.css",
-    "static/js/main.92242d05.chunk.js"
+    "static/js/main.680e85a8.chunk.js"
   ]
 }
