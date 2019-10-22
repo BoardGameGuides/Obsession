@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { parse, stringify } from 'query-string';
+import { Link, withRouter } from 'react-router-dom';
 import { index } from './searchIndex';
 import { routes } from './contentFiles';
 
-export default class Search extends React.Component {
+class Search extends React.Component {
   constructor(props) {
     super(props);
     this.state = {query: '', results: []};
@@ -11,7 +12,15 @@ export default class Search extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  requestedQuery() {
+    const uriParameters = parse(this.props.location.search);
+    return uriParameters.q || '';
+  }
+
   search(query) {
+    if (query !== this.requestedQuery()) {
+      this.props.history.replace({ search: '?' + stringify({ q: query })});
+    }
     const results = index.search(query + '*').map(x => '/' + x.ref);
     console.log(results);
     this.setState({query, results});
@@ -22,7 +31,7 @@ export default class Search extends React.Component {
   }
 
   componentDidMount() {
-    this.search('');
+    this.search(this.requestedQuery());
     this.searchInput.focus();
   }
 
@@ -39,3 +48,5 @@ export default class Search extends React.Component {
     );
   }
 }
+
+export default withRouter(Search);
