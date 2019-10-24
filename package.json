@@ -2,7 +2,7 @@
   "name": "obsession",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://boardgameguides.github.io/Obsession/",
+  "homepage": ".",
   "dependencies": {
     "lunr": "^2.3.7",
     "number-to-words": "^1.2.4",
