@@ -15,7 +15,7 @@ function App() {
       <Switch>
         {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template route={route}><MdxPage route={route} /></Template></Route>)}
         <Route path="/search">
-          <Template route="/"><Search /></Template>
+          <Template route="/search"><Search /></Template>
         </Route>
         <Route path="/">
           <Template route="/"><Home /></Template>

@@ -6,10 +6,12 @@ import { faSearch, faWrench, faArrowLeft } from '@fortawesome/free-solid-svg-ico
 import logo30 from './logo30.png';
 import { name } from './shared/game-specific/properties';
 
-const isInStandaloneMode = (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator['standalone']) || document.referrer.includes('android-app://');
-
 /**
- * @param {{ children: React.ReactNode; route: string; }} props
+ * @typedef {object} Props
+ * @prop {string} route
+ * @prop {import("history").History} history
+ *
+ * @extends {React.Component<Props>}
  */
 class Template extends React.Component {
   constructor(props) {
@@ -26,22 +28,31 @@ class Template extends React.Component {
     return (
       <div>
         <Navbar bg="light">
-          <Navbar.Brand>
-            <Link to="/">
-              <img src={logo30} width="30" height="30" alt={name + " logo"} />
-            </Link>
-          </Navbar.Brand>
-          {!isInStandaloneMode ? null :
+          <ul className="navbar-nav mr-auto">
+            <Navbar.Brand>
+              {this.props.route === '/' ?
+                <img src={logo30} width="30" height="30" alt={name + " logo"} /> :
+                <Link to="/">
+                  <img src={logo30} width="30" height="30" alt={name + " logo"} />
+                </Link>
+              }
+            </Navbar.Brand>
             <Form inline>
               <Button onClick={this.back} variant="outline-primary"><FontAwesomeIcon icon={faArrowLeft} /> Back</Button>
             </Form>
+          </ul>
+          {this.props.route === '/search' ? null :
+            <ul className="navbar-nav flex-grow-1 justify-content-center">
+              <Form inline>
+                <Button as={Link} to="/search" variant="outline-primary"><FontAwesomeIcon icon={faSearch} /> Search</Button>
+              </Form>
+            </ul>
           }
-          <Form inline>
-            <Button as={Link} to="/search" variant="outline-primary"><FontAwesomeIcon icon={faSearch} /> Search</Button>
-          </Form>
-          <Form inline>
-            <Button as={Link} to="/settings" variant="outline-primary"><FontAwesomeIcon icon={faWrench} /> Settings</Button>
-          </Form>
+          <ul className="navbar-nav">
+            <Form inline>
+              <Button as={Link} to="/settings" variant="outline-primary"><FontAwesomeIcon icon={faWrench} /> Settings</Button>
+            </Form>
+          </ul>
         </Navbar>
         <Container fluid>
           <Row>
