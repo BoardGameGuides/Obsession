@@ -1,23 +1,26 @@
 {
   "files": {
-    "main.css": "/Obsession/static/css/main.b9b28da3.chunk.css",
-    "main.js": "/Obsession/static/js/main.680e85a8.chunk.js",
-    "main.js.map": "/Obsession/static/js/main.680e85a8.chunk.js.map",
-    "runtime-main.js": "/Obsession/static/js/runtime-main.08c13e2b.js",
-    "runtime-main.js.map": "/Obsession/static/js/runtime-main.08c13e2b.js.map",
-    "static/js/2.5d8fb592.chunk.js": "/Obsession/static/js/2.5d8fb592.chunk.js",
-    "static/js/2.5d8fb592.chunk.js.map": "/Obsession/static/js/2.5d8fb592.chunk.js.map",
-    "index.html": "/Obsession/index.html",
-    "precache-manifest.2535790287e1b9bf510a460ce43cb4b6.js": "/Obsession/precache-manifest.2535790287e1b9bf510a460ce43cb4b6.js",
-    "service-worker.js": "/Obsession/service-worker.js",
-    "static/css/main.b9b28da3.chunk.css.map": "/Obsession/static/css/main.b9b28da3.chunk.css.map",
-    "static/media/barn.png": "/Obsession/static/media/barn.21e69e57.png",
-    "static/media/sara-forbes-bonetta.jpg": "/Obsession/static/media/sara-forbes-bonetta.9bb61172.jpg"
+    "main.css": "./static/css/main.7145f95e.chunk.css",
+    "main.js": "./static/js/main.1fcd8b57.chunk.js",
+    "main.js.map": "./static/js/main.1fcd8b57.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.8b464e81.js",
+    "runtime-main.js.map": "./static/js/runtime-main.8b464e81.js.map",
+    "static/css/2.0624914a.chunk.css": "./static/css/2.0624914a.chunk.css",
+    "static/js/2.65128a31.chunk.js": "./static/js/2.65128a31.chunk.js",
+    "static/js/2.65128a31.chunk.js.map": "./static/js/2.65128a31.chunk.js.map",
+    "index.html": "./index.html",
+    "precache-manifest.387cd7b7c8ee48897d9d8f24c817b6f9.js": "./precache-manifest.387cd7b7c8ee48897d9d8f24c817b6f9.js",
+    "service-worker.js": "./service-worker.js",
+    "static/css/2.0624914a.chunk.css.map": "./static/css/2.0624914a.chunk.css.map",
+    "static/css/main.7145f95e.chunk.css.map": "./static/css/main.7145f95e.chunk.css.map",
+    "static/media/barn.png": "./static/media/barn.21e69e57.png",
+    "static/media/sara-forbes-bonetta.jpg": "./static/media/sara-forbes-bonetta.9bb61172.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.08c13e2b.js",
-    "static/js/2.5d8fb592.chunk.js",
-    "static/css/main.b9b28da3.chunk.css",
-    "static/js/main.680e85a8.chunk.js"
+    "static/js/runtime-main.8b464e81.js",
+    "static/css/2.0624914a.chunk.css",
+    "static/js/2.65128a31.chunk.js",
+    "static/css/main.7145f95e.chunk.css",
+    "static/js/main.1fcd8b57.chunk.js"
   ]
 }

@@ -13,8 +13,8 @@
       "sizes": "192x192"
     },
     {
-      "src": "splash512.png",
-      "type": "image/png",
+      "src": "splash512.jpg",
+      "type": "image/jpeg",
       "sizes": "512x512"
     }
   ],
