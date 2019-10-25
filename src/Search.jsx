@@ -1,6 +1,10 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { parse, stringify } from 'query-string';
 import { Link, withRouter } from 'react-router-dom';
+import { Form, FormGroup, FormControl, InputGroup } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { index } from './searchIndex';
 import { routes } from './contentFiles';
 import { numberToWords } from './shared/searchSettings';
@@ -8,7 +12,7 @@ import { numberToWords } from './shared/searchSettings';
 class Search extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {query: '', results: []};
+    this.state = { query: '', results: [] };
 
     this.handleChange = this.handleChange.bind(this);
   }
@@ -23,7 +27,7 @@ class Search extends React.Component {
    */
   search(query) {
     if (query !== this.requestedQuery()) {
-      this.props.history.replace({ search: '?' + stringify({ q: query })});
+      this.props.history.replace({ search: '?' + stringify({ q: query }) });
     }
 
     // Handle numeric searches specially:
@@ -46,7 +50,7 @@ class Search extends React.Component {
     }
     const results = queryResults.map(x => '/' + x.ref);
     console.log(results);
-    this.setState({query, results});
+    this.setState({ query, results });
   }
 
   handleChange(event) {
@@ -61,10 +65,19 @@ class Search extends React.Component {
   render() {
     return (
       <div>
-        <div className="page-header">
-          <input type="text" value={this.state.query} onChange={this.handleChange} placeholder="Search..." ref={input => this.searchInput = input} />
-        </div>
-        <div className="page-body">
+        <Form>
+          <FormGroup>
+            <InputGroup>
+              <InputGroup.Prepend>
+                <InputGroup.Text><FontAwesomeIcon icon={faSearch} /></InputGroup.Text>
+              </InputGroup.Prepend>
+              {/*
+              // @ts-ignore */}
+              <FormControl type="text" value={this.state.query} onChange={this.handleChange} placeholder="Search..." ref={input => this.searchInput = /** @type {InputElement} */ (ReactDOM.findDOMNode(input))} />
+            </InputGroup>
+          </FormGroup>
+        </Form>
+        <div>
           {this.state.results.map(route => <div key={route}><Link to={route} replace={this.props.route === route}>{routes[route].displayTitle}</Link></div>)}
         </div>
       </div>
