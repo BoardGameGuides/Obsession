@@ -5,6 +5,12 @@
 .content h1 {
   text-align: center;
   font-family: 'Great Vibes', cursive;
+  margin-top: .5rem;
+}
+
+.content img {
+  display: block;
+  margin: 0 auto;
 }
 
 .flavor-text {
