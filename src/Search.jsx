@@ -9,6 +9,22 @@ import { index } from './searchIndex';
 import { routes } from './contentFiles';
 import { numberToWords } from './shared/searchSettings';
 
+/**
+ * 
+ * @param {{route: string;}} props 
+ */
+function SearchResult(props) {
+  return <div><Link to={props.route}>{routes[props.route].displayTitle}</Link></div>;
+}
+
+/**
+ * @typedef {object} Props
+ * @prop {string} route
+ * @prop {import("history").Location} location
+ * @prop {import("history").History} history
+ *
+ * @extends {React.Component<Props>}
+ */
 class Search extends React.Component {
   constructor(props) {
     super(props);
@@ -78,7 +94,7 @@ class Search extends React.Component {
           </FormGroup>
         </Form>
         <div>
-          {this.state.results.map(route => <div key={route}><Link to={route} replace={this.props.route === route}>{routes[route].displayTitle}</Link></div>)}
+          {this.state.results.map(route => <SearchResult key={route} route={route} />)}
         </div>
       </div>
     );
