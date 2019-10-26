@@ -25,15 +25,15 @@ class Template extends React.Component {
   }
 
   render() {
+    const logo = <img src={logo30} width="30" height="30" alt={name + " logo"} />;
     return (
       <div>
         <Navbar bg="light">
           <ul className="navbar-nav mr-auto">
             <Navbar.Brand>
-              {this.props.route === '/' ?
-                <img src={logo30} width="30" height="30" alt={name + " logo"} /> :
+              {this.props.route === '/' ? logo :
                 <Link to="/">
-                  <img src={logo30} width="30" height="30" alt={name + " logo"} />
+                  {logo}
                 </Link>
               }
             </Navbar.Brand>
