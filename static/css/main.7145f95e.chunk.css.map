@@ -1,1 +1,0 @@
-{"version":3,"sources":["App.css"],"names":[],"mappings":"AAAA,SACE,kBACF,CAEA,aACE,iBACF","file":"main.7145f95e.chunk.css","sourcesContent":[".content {\n  text-align: justify;\n}\n\n.flavor-text {\n  font-style: italic;\n}"]}
