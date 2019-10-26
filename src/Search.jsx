@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { parse, stringify } from 'query-string';
 import { Link, withRouter } from 'react-router-dom';
-import { Form, FormGroup, FormControl, InputGroup } from 'react-bootstrap';
+import { Form, FormGroup, FormControl, InputGroup, ListGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { index } from './searchIndex';
@@ -14,7 +14,7 @@ import { numberToWords } from './shared/searchSettings';
  * @param {{route: string;}} props 
  */
 function SearchResult(props) {
-  return <div><Link to={props.route}>{routes[props.route].displayTitle}</Link></div>;
+  return <ListGroup.Item as={Link} to={props.route} action>{routes[props.route].displayTitle}</ListGroup.Item>;
 }
 
 /**
@@ -93,9 +93,9 @@ class Search extends React.Component {
             </InputGroup>
           </FormGroup>
         </Form>
-        <div>
+        <ListGroup>
           {this.state.results.map(route => <SearchResult key={route} route={route} />)}
-        </div>
+        </ListGroup>
       </div>
     );
   }
