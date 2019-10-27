@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import mdxAsync from '@mdx-js/mdx';
 import { MDXProvider, mdx } from '@mdx-js/react';
 import frontmatter from 'remark-frontmatter';
+import remarkImages from 'remark-images';
 import visit from 'unist-util-visit';
 import { safeLoad } from 'js-yaml';
 
@@ -46,7 +47,7 @@ async function transformJsxAsync(code) {
  */
 export async function renderToHtmlAsync(mdxFile) {
   const container = { yaml: null };
-  const jsx = await mdxAsync(mdxFile, { skipExport: true, remarkPlugins: [frontmatter, captureYaml(container)] });
+  const jsx = await mdxAsync(mdxFile, { skipExport: true, remarkPlugins: [frontmatter, captureYaml(container), remarkImages] });
   const code = await transformJsxAsync(jsx);
   const scope = { mdx };
   const fn = new Function(
