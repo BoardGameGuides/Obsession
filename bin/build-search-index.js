@@ -63,8 +63,9 @@ function mdxToDoc(route, mdxFile) {
  * @param {string} route
  * @param {string} html
  * @param {{route?: string}[]} docs
+ * @param {{route?: string}[]} images
  */
-function checkLinks(route, html, docs) {
+function checkLinks(route, html, docs, images) {
   const parser = new Parser({
     onopentag(name, attribs) {
       if (name === 'a') {
@@ -75,6 +76,14 @@ function checkLinks(route, html, docs) {
             console.log('WARN: Document has broken link.', route, href);
           }
         }
+      } else if (name === 'img') {
+        const src = attribs['src'];
+        if (!isExternal(src)) {
+          const relativePath = combine(route, '..', src);
+          if (!images.find(x => x.route === relativePath)) {
+            console.log('WARN: Document has broken image.', route, src);
+          }
+        }
       }
     }
   }, { decodeEntities: true });
@@ -83,6 +92,12 @@ function checkLinks(route, html, docs) {
 }
 
 (async () => {
+  /** @type {{ path: string; route?: string;}[]} */
+  const images = (await walkAsync('src/content/')).filter(x => x.endsWith('.jpg') || x.endsWith('.png')).map(path => ({ path }));
+  for (const item of images) {
+    item.route = item.path.slice(11);
+  }
+
   /** @type {{ path: string; route?: string; frontmatter?: any; html?: string; doc?: { id: string; title: string; text: string; } }[]} */
   const items = (await walkAsync('src/content/')).filter(x => x.endsWith('.mdx')).map(path => ({ path }));
   let allText = '';
@@ -103,7 +118,7 @@ function checkLinks(route, html, docs) {
     if (!item.doc.title) {
       console.log('WARN: Document has no title.', item.path);
     }
-    checkLinks(item.route, item.html, items);
+    checkLinks(item.route, item.html, items, images);
   }
 
   // Build the index and save it
