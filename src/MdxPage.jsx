@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import { combine } from './path';
-import { images, routes } from './contentFiles';
+import { images, imagesDimensions, routes } from './contentFiles';
 
 /**
  * Whether the string is an external resource, i.e., an absolute or protocol relative URI.
@@ -25,7 +25,8 @@ function RelativeImage(route) {
 
     const imageImportPath = combine(routes[route].path, '..', props.src);
     const image = images[imageImportPath].importedModule;
-    return <img {...props} alt={props.alt} src={image} />;
+    const imageDimensions = imagesDimensions[imageImportPath].importedModule;
+    return <img {...props} alt={props.alt} src={image} width={imageDimensions.width} height={imageDimensions.height} />;
   };
 }
 

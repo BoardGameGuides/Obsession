@@ -5,6 +5,10 @@ const imageContext = require.context('./content/', true, /\.(jpg|png)$/);
 export const images = importContext(imageContext);
 
 // @ts-ignore
+const imageDimensionsContext = require.context('image-dimensions-loader!./content/', true, /\.(jpg|png)$/);
+export const imagesDimensions = importContext(imageDimensionsContext);
+
+// @ts-ignore
 const pagesContext = require.context('!babel-loader!mdx-loader!./content/', true, /\.mdx$/);
 export const pages = importContext(pagesContext);
 
