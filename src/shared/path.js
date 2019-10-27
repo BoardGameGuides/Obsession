@@ -66,3 +66,12 @@ export function combine(base, ...others) {
   }
   return result;
 }
+
+/**
+ * Whether the string is an external resource, i.e., an absolute or protocol relative URI.
+ * @param {string} text
+ * @returns {boolean}
+ */
+export function isExternal(text) {
+  return text.startsWith('//') || text.search(/^[a-zA-Z]+:/) !== -1;
+}

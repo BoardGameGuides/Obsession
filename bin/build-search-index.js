@@ -4,6 +4,7 @@ import { renderToHtmlAsync } from './render-mdx';
 import { buildIndex } from './indexer';
 import { wordFrequency, stemmedFrequency, sanityCheck } from './frequency';
 import textTransform from '../src/shared/game-specific/build-search-index-text-transform';
+import { isExternal, combine } from '../src/shared/path';
 
 /**
  * Walks a directory tree.
@@ -21,7 +22,7 @@ async function walkAsync(dir) {
       result.push(dir + entry);
     }
   }
-  
+
   return result;
 };
 
@@ -37,11 +38,11 @@ async function saveFrequencyAsync(filename, data) {
 
 /**
  * Converts a parsed MDX file to a document that can be indexed.
- * @param {string} id
+ * @param {string} route
  * @param {{frontmatter: object, html: string}} mdxFile
  * @returns {{id: string, text: string, title: string}}
  */
-function mdxToDoc(id, mdxFile) {
+function mdxToDoc(route, mdxFile) {
   let textResult = '';
   const parser = new Parser({
     onclosetag() {
@@ -54,31 +55,62 @@ function mdxToDoc(id, mdxFile) {
   parser.write(mdxFile.html);
   parser.end();
   const text = textTransform(textResult).replace(/\s+/g, ' ').trim();
-  return { id, text, title: mdxFile.frontmatter.title };
+  return { id: route.substring(1), text, title: mdxFile.frontmatter.title };
+}
+
+/**
+ * Converts a parsed MDX file to a document that can be indexed.
+ * @param {string} route
+ * @param {string} html
+ * @param {{route?: string}[]} docs
+ */
+function checkLinks(route, html, docs) {
+  const parser = new Parser({
+    onopentag(name, attribs) {
+      if (name === 'a') {
+        const href = attribs['href'];
+        if (!isExternal(href)) {
+          const relativePath = combine(route, '..', href);
+          if (!docs.find(x => x.route === relativePath)) {
+            console.log('WARN: Document has broken link.', route, href);
+          }
+        }
+      }
+    }
+  }, { decodeEntities: true });
+  parser.write(html);
+  parser.end();
 }
 
 (async () => {
-  const paths = (await walkAsync('src/content/')).filter(x => x.endsWith('.mdx'));
-  const docs = [];
+  /** @type {{ path: string; route?: string; frontmatter?: any; html?: string; doc?: { id: string; title: string; text: string; } }[]} */
+  const items = (await walkAsync('src/content/')).filter(x => x.endsWith('.mdx')).map(path => ({ path }));
   let allText = '';
-  for (const path of paths) {
-    const route = path.slice(12, -4);
-    const file = await fs.readFile(path, 'utf8');
+  for (const item of items) {
+    item.route = item.path.slice(11, -4);
+    const file = await fs.readFile(item.path, 'utf8');
     const rendered = await renderToHtmlAsync(file);
-    const doc = mdxToDoc(route, rendered);
-    if (!doc.title) {
-      console.log('WARN: Document has no title.', path);
-    }
-    docs.push(doc);
-    allText += ' ' + doc.text;
+    item.frontmatter = rendered.frontmatter;
+    item.html = rendered.html;
+    item.doc = mdxToDoc(item.route, rendered);
+    allText += ' ' + item.doc.text;
   }
 
-  const index = buildIndex(docs);
-  await fs.writeFile('src/obj/searchIndex.json', JSON.stringify(index));
-  
-  // Perform frequency analysis of words and sanity checks.
+  // Perform sanity checks
   const words = allText.split(' ').filter(x => x);
+  sanityCheck(words);
+  for (const item of items) {
+    if (!item.doc.title) {
+      console.log('WARN: Document has no title.', item.path);
+    }
+    checkLinks(item.route, item.html, items);
+  }
+
+  // Build the index and save it
+  const index = buildIndex(items.map(x => x.doc));
+  await fs.writeFile('src/obj/searchIndex.json', JSON.stringify(index));
+
+  // Perform frequency analysis of words
   await saveFrequencyAsync('src/obj/words.txt', wordFrequency(words));
   await saveFrequencyAsync('src/obj/words.stemmed.txt', stemmedFrequency(words));
-  sanityCheck(words);
 })();

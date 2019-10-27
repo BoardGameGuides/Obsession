@@ -1,17 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
-import { combine } from './path';
+import { isExternal, combine } from './shared/path';
 import { images, imagesDimensions, routes } from './contentFiles';
-
-/**
- * Whether the string is an external resource, i.e., an absolute or protocol relative URI.
- * @param {string} text
- * @returns {boolean}
- */
-function isExternal(text) {
-  return text.startsWith('//') || text.search(/^[a-zA-Z]+:/) !== -1;
-}
 
 /**
  * Produces `img` tags, interpreting local paths as references to imported images.
