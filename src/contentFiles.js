@@ -1,12 +1,29 @@
 import { importContext } from './importer';
+import { objmap } from './util';
+
+/**
+ * @typedef ImageFile
+ * @property {string} path
+ * @property {string} src
+ */
 
 // @ts-ignore
 const imageContext = require.context('./content/', true, /\.(jpg|png)$/);
-export const images = importContext(imageContext);
+const imagesContext = importContext(imageContext);
+export const images = objmap(imagesContext, image => /** @type ImageFile */ ({ path: image.path, src: image.importedModule }));
+
+/**
+ * @typedef ImageDimensions
+ * @property {string} path
+ * @property {number} width
+ * @property {number} height
+ */
 
 // @ts-ignore
 const imageDimensionsContext = require.context('image-dimensions-loader!./content/', true, /\.(jpg|png)$/);
-export const imagesDimensions = importContext(imageDimensionsContext);
+const imagesDimensionsContext = importContext(imageDimensionsContext);
+export const imagesDimensions = objmap(imagesDimensionsContext,
+  image => /** @type ImageDimensions */ ({ path: image.path, height: image.importedModule.height, width: image.importedModule.width }));
 
 // @ts-ignore
 const pagesContext = require.context('!babel-loader!mdx-loader!./content/', true, /\.mdx$/);

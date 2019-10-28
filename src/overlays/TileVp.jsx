@@ -16,13 +16,13 @@ function rect(x, y, w, h) {
  */
 export default function TileVp(props) {
   const imageRoute = resolveRoute(props.route, props.src);
-  const h = imagesDimensions[imageRoute].importedModule.height;
-  const w = imagesDimensions[imageRoute].importedModule.width;
+  const h = imagesDimensions[imageRoute].height;
+  const w = imagesDimensions[imageRoute].width;
   const darken = rect(0, 0, w, h);
   const highlight = rectPoint(128, 130, 153, 156);
   return (
     <svg height={h} width={w} style={{display: "block", margin: "0 auto"}}>
-      <image xlinkHref={images[imageRoute].importedModule} />
+      <image xlinkHref={images[imageRoute].src} />
       <path d={`${darken} ${highlight}`} fill="black" fillOpacity="0.5" fillRule="evenodd" />
     </svg>
   );

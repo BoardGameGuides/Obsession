@@ -15,8 +15,8 @@ function RelativeImage(route) {
       return <img {...props} alt={props.alt} />;
 
     const imageImportPath = resolveRoute(routes[route].path, props.src);
-    const image = images[imageImportPath].importedModule;
-    const imageDimensions = imagesDimensions[imageImportPath].importedModule;
+    const image = images[imageImportPath].src;
+    const imageDimensions = imagesDimensions[imageImportPath];
     return <img {...props} alt={props.alt} src={image} width={imageDimensions.width} height={imageDimensions.height} />;
   };
 }
