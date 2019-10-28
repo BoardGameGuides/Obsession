@@ -4,7 +4,7 @@ import { renderToHtmlAsync } from './render-mdx';
 import { buildIndex } from './indexer';
 import { wordFrequency, stemmedFrequency, sanityCheck } from './frequency';
 import textTransform from '../src/shared/game-specific/build-search-index-text-transform';
-import { isExternal, combine } from '../src/shared/path';
+import { resolveRoute } from '../src/shared/path';
 
 /**
  * Walks a directory tree.
@@ -70,19 +70,15 @@ function checkLinks(route, html, docs, images) {
     onopentag(name, attribs) {
       if (name === 'a') {
         const href = attribs['href'];
-        if (!isExternal(href)) {
-          const relativePath = combine(route, '..', href);
-          if (!docs.find(x => x.route === relativePath)) {
-            console.log('WARN: Document has broken link.', route, href);
-          }
+        const relativePath = resolveRoute(route, href);
+        if (!docs.find(x => x.route === relativePath)) {
+          console.log('WARN: Document has broken link.', route, href);
         }
       } else if (name === 'img') {
         const src = attribs['src'];
-        if (!isExternal(src)) {
-          const relativePath = combine(route, '..', src);
-          if (!images.find(x => x.route === relativePath)) {
-            console.log('WARN: Document has broken image.', route, src);
-          }
+        const relativePath = resolveRoute(route, src);
+        if (!images.find(x => x.route === relativePath)) {
+          console.log('WARN: Document has broken image.', route, src);
         }
       }
     }

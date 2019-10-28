@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
-import { isExternal, combine } from './shared/path';
+import { isExternal, resolveRoute } from './shared/path';
 import { images, imagesDimensions, routes } from './contentFiles';
 
 /**
@@ -14,7 +14,7 @@ function RelativeImage(route) {
     if (isExternal(props.src))
       return <img {...props} alt={props.alt} />;
 
-    const imageImportPath = combine(routes[route].path, '..', props.src);
+    const imageImportPath = resolveRoute(routes[route].path, props.src);
     const image = images[imageImportPath].importedModule;
     const imageDimensions = imagesDimensions[imageImportPath].importedModule;
     return <img {...props} alt={props.alt} src={image} width={imageDimensions.width} height={imageDimensions.height} />;
@@ -31,7 +31,7 @@ function RelativeLink(route) {
     if (isExternal(props.href))
       return <a {...props}>{props.children}</a>;
 
-    const relativePath = combine(route, '..', props.href);
+    const relativePath = resolveRoute(route, props.href);
     return <Link {...props} to={relativePath} />;
   }
 }

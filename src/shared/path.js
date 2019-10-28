@@ -75,3 +75,15 @@ export function combine(base, ...others) {
 export function isExternal(text) {
   return text.startsWith('//') || text.search(/^[a-zA-Z]+:/) !== -1;
 }
+
+/**
+ * Determines the route of an item from a base route to a reference.
+ * @param {string} base 
+ * @param {string} ref 
+ */
+export function resolveRoute(base, ref) {
+  if (isExternal(ref)) {
+    return ref;
+  }
+  return combine(base, '..', ref);
+}
