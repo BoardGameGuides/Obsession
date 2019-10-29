@@ -41,11 +41,13 @@ export default function Highlight(props) {
         const highlightPath = props.highlights.map(x => rect(x)).join(' ');
         const path = rect({ x: 0, y: 0, width, height }) + ' ' + highlightPath;
         return (
-          <svg width={width} height={height} style={{ display: "block", margin: "0 auto" }}>
-            <image xlinkHref={images[imageRoute].src} />
-            <path d={path} fill="black" fillOpacity="0.5" fillRule="evenodd" />
-            <path d={highlightPath} stroke="red" fill="none" strokeWidth="3" strokeLinejoin="round" />
-          </svg>
+          <p>
+            <svg width={width} height={height} style={{ display: "block", margin: "0 auto" }} className="img-fluid" viewBox={`0 0 ${width} ${height}`}>
+              <image xlinkHref={images[imageRoute].src} />
+              <path d={path} fill="black" fillOpacity="0.5" fillRule="evenodd" />
+              <path d={highlightPath} stroke="red" fill="none" strokeWidth="3" strokeLinejoin="round" />
+            </svg>
+          </p>
         );
       }}
     </CurrentRouteContext.Consumer>
