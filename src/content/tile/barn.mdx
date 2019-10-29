@@ -5,6 +5,7 @@ category: service
 surcharge: -100
 ---
 import TileVp from '../../overlays/TileVp';
+import EstateService from '../../overlays/EstateService';
 
 The Barn is the service location that references the employment of a head gardener and empowers the family to enhance their reputation when estate activities are hosted.
 
@@ -16,8 +17,12 @@ Few aesthetic pursuits more iconically represent 19th century English culture th
 
 </div>
 
-The Barn service tile appears randomly in the builders' market and has a discount of £100 attached to the purchase price. When a player acquires this tile, it is placed under SERVICE in the country estate organiser. On all future turns when an estate tile is played, the player increases his reputation by one on his player board reputation wheel.
+The Barn service tile appears randomly in the builders' market and has a discount of £100 attached to the purchase price. When a player acquires this tile, it is placed under SERVICE in the country estate organiser.
+
+<EstateService />
+
+On all future turns when an estate tile is played, the player increases his reputation by one on his player board reputation wheel.
 
 Note that the Barn is worth 2 victory points; all other service tiles are worth at most 1 victory point.
 
-<TileVp route="./tile/barn" src="barn.png" />
+<TileVp src="barn.png" />

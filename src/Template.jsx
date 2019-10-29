@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faWrench, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import logo30 from './logo30.png';
 import { name } from './shared/game-specific/properties';
+import { CurrentRouteContext } from './contentFiles';
 
 /**
  * @typedef {object} Props
@@ -27,7 +28,7 @@ class Template extends React.Component {
   render() {
     const logo = <img src={logo30} width="30" height="30" alt={name + " logo"} />;
     return (
-      <div>
+      <CurrentRouteContext.Provider value={this.props.route}>
         <Navbar bg="light">
           <ul className="navbar-nav mr-auto">
             <Navbar.Brand>
@@ -63,7 +64,7 @@ class Template extends React.Component {
             </Col>
           </Row>
         </Container>
-      </div>
+      </CurrentRouteContext.Provider>
     );
   }
 }

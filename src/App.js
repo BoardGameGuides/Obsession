@@ -13,7 +13,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <Switch>
-        {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template route={route}><MdxPage route={route} /></Template></Route>)}
+        {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template route={route}><MdxPage /></Template></Route>)}
         <Route path="/search">
           <Template route="/search"><Search /></Template>
         </Route>
