@@ -21,7 +21,7 @@ import { safeLoad } from 'js-yaml';
 function captureYaml(container) {
   return () => tree =>
     visit(tree, 'yaml', node => {
-      container.yaml = safeLoad(/** @type {any} */ (node).value);
+      container.yaml = safeLoad(/** @type {any} */(node).value);
     });
 }
 
@@ -34,10 +34,20 @@ async function transformJsxAsync(code) {
   const result = await transformAsync(code, {
     plugins: [
       '@babel/plugin-transform-react-jsx',
-      '@babel/plugin-proposal-object-rest-spread'
+      '@babel/plugin-proposal-object-rest-spread',
+      '@babel/plugin-transform-modules-commonjs'
     ]
   });
   return result.code;
+}
+
+/**
+ * Returns a stub component that just passes through its children.
+ */
+function stubRequire(path) {
+  return props => {
+    return React.createElement("stub", props);
+  };
 }
 
 /**
@@ -49,7 +59,7 @@ export async function renderToHtmlAsync(mdxFile) {
   const container = { yaml: null };
   const jsx = await mdxAsync(mdxFile, { skipExport: true, remarkPlugins: [frontmatter, captureYaml(container), remarkImages] });
   const code = await transformJsxAsync(jsx);
-  const scope = { mdx };
+  const scope = { mdx, require: stubRequire };
   const fn = new Function(
     'React',
     ...Object.keys(scope),

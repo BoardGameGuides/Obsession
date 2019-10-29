@@ -80,6 +80,14 @@ function checkLinks(route, html, docs, images) {
         if (!images.find(x => x.route === relativePath)) {
           console.log('WARN: Document has broken image.', route, src);
         }
+      } else if (name === 'stub') {
+        const src = attribs['src'];
+        if (src) {
+          const relativePath = resolveRoute(route, src);
+          if (!docs.find(x => x.route === relativePath) && !images.find(x => x.route === relativePath)) {
+            console.log('WARN: Document has broken component.', route, src);
+          }
+        }
       }
     }
   }, { decodeEntities: true });
