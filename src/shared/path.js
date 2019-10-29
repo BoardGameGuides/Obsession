@@ -22,7 +22,7 @@ export function isAbsolute(path) { return path.startsWith('/'); }
  * @param {string} path 
  */
 function pathParent(path) {
-  if (path.startsWith('..')) {
+  if (path.match(/^(\.\.\/)+$/)) {
     return '../' + path;
   }
   if (path === '.') {
@@ -32,7 +32,7 @@ function pathParent(path) {
     return '/';
   }
 
-  // The path has at least one segment, and it starts with either './' or '/'.
+  // The path has at least one segment.
   const index = path.lastIndexOf('/');
   if (index === 0) {
     // This is an absolute path that just had its only segment removed.
