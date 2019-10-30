@@ -4,6 +4,7 @@ import { Container, Row, Col, Navbar, Form, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faWrench, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import logo30 from './logo30.png';
+import wallpaper from './wallpaper.png';
 import { name } from './shared/game-specific/properties';
 import { CurrentRouteContext } from './contentFiles';
 
@@ -57,11 +58,13 @@ class Template extends React.Component {
         </Navbar>
         <Container fluid>
           <Row>
-            <Col>
+            <Col lg="2" md="1" style={{backgroundImage: 'url(' + wallpaper + ')'}} />
+            <Col lg="8" md="10">
               <div className="content">
                 {this.props.children}
               </div>
             </Col>
+            <Col lg="2" md="1" style={{backgroundImage: 'url(' + wallpaper + ')'}} />
           </Row>
         </Container>
       </CurrentRouteContext.Provider>
