@@ -2,7 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import { isExternal, resolveRoute } from './shared/path';
-import { images, imagesDimensions, routes, CurrentRouteContext } from './contentFiles';
+import { images, imagesDimensions, routes } from './contentFiles';
+import { CurrentRouteContext } from './state/currentRoute';
 
 /**
  * Produces `img` tags, interpreting local paths as references to imported images.

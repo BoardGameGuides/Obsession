@@ -1,8 +1,10 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { InputGroup, FormControl } from 'react-bootstrap';
+import { InputGroup, FormControl, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { CurrentRouteContext } from './state/currentRoute';
 
 /**
  * @typedef {object} Props
@@ -34,7 +36,12 @@ function VoiceSearchBox(props) {
   return (
     <InputGroup>
       <InputGroup.Prepend>
-        <InputGroup.Text><FontAwesomeIcon icon={faSearch} /></InputGroup.Text>
+        <CurrentRouteContext.Consumer>
+          {route => route === '/search' ?
+            <Button variant="outline-primary"><FontAwesomeIcon icon={faSearch} /></Button> :
+            <Button as={Link} to="/search" variant="outline-primary"><FontAwesomeIcon icon={faSearch} /></Button>
+          }
+        </CurrentRouteContext.Consumer>
       </InputGroup.Prepend>
       <FormControl type="text" value={props.value} onChange={event => props.onValueChange(event.target.value)} placeholder="Search..." ref={formControlRef} />
     </InputGroup>

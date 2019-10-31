@@ -6,7 +6,7 @@ import { faSearch, faWrench, faArrowLeft } from '@fortawesome/free-solid-svg-ico
 import logo30 from './logo30.png';
 import wallpaper from './wallpaper.png';
 import { name } from './shared/game-specific/properties';
-import { CurrentRouteContext } from './contentFiles';
+import { CurrentRouteContext } from './state/currentRoute';
 
 /**
  * 

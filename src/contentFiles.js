@@ -1,4 +1,3 @@
-import React from 'react';
 import { importContext } from './importer';
 import { objmap } from './util';
 
@@ -94,5 +93,3 @@ for (const path in pages) {
     metadata
   };
 }
-
-export const CurrentRouteContext = React.createContext(null);

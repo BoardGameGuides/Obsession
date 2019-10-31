@@ -1,5 +1,6 @@
 import React from 'react';
-import { images, imagesDimensions, CurrentRouteContext } from '../contentFiles';
+import { images, imagesDimensions } from '../contentFiles';
+import { CurrentRouteContext } from '../state/currentRoute';
 import { resolveRoute } from '../shared/path';
 
 /**
