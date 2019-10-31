@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { parse, stringify } from 'query-string';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { Form, FormGroup, ListGroup } from 'react-bootstrap';
 import VoiceSearchBox from './VoiceSearchBox';
 import { index } from './searchIndex';
@@ -16,34 +16,18 @@ function SearchResult(props) {
   return <ListGroup.Item as={Link} to={props.route} action>{routes[props.route].displayTitle}</ListGroup.Item>;
 }
 
-/**
- * @typedef {object} Props
- * @prop {string} route
- * @prop {import("history").Location} location
- * @prop {import("history").History} history
- *
- * @extends {React.Component<Props>}
- */
-class Search extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { query: '', results: [] };
+export default function Search() {
+  const history = useHistory();
+  const location = useLocation();
+  const [state, setState] = useState({ query: '', results: [] });
 
-    this.search = this.search.bind(this);
-  }
-
-  requestedQuery() {
-    const uriParameters = parse(this.props.location.search);
+  function requestedQuery() {
+    const uriParameters = parse(location.search);
     return (/** @type {string} */ (uriParameters.q) || '').trim();
   }
 
-  /**
-   * @param {string} query 
-   */
-  search(query) {
-    if (query !== this.requestedQuery()) {
-      this.props.history.replace({ search: '?' + stringify({ q: query }) });
-    }
+  function search() {
+    const query = requestedQuery();
 
     // Handle numeric searches specially:
     // - Boost the number. If "10" is in the document, that's a very high match.
@@ -65,28 +49,32 @@ class Search extends React.Component {
     }
     const results = queryResults.map(x => '/' + x.ref);
     console.log(results);
-    this.setState({ query, results });
+    setState({ query, results });
   }
 
-  componentDidMount() {
-    this.search(this.requestedQuery());
-    this.searchInput.focus();
+  /**
+   * @param {string} query 
+   */
+  function updateQuery(query) {
+    if (query !== requestedQuery()) {
+      history.replace({ search: '?' + stringify({ q: query }) });
+    }
   }
 
-  render() {
-    return (
-      <div>
-        <Form>
-          <FormGroup>
-            <VoiceSearchBox value={this.state.query} onValueChange={this.search} ref={/** @type {any} */ (input) => this.searchInput = /** @type {HTMLInputElement} */ (ReactDOM.findDOMNode(input))} />
-          </FormGroup>
-        </Form>
-        <ListGroup>
-          {this.state.results.map(route => <SearchResult key={route} route={route} />)}
-        </ListGroup>
-      </div>
-    );
-  }
+  useEffect(() => {
+    search();
+  }, [location]);
+
+  return (
+    <div>
+      <Form>
+        <FormGroup>
+          <VoiceSearchBox value={state.query} onValueChange={updateQuery} />
+        </FormGroup>
+      </Form>
+      <ListGroup>
+        {state.results.map(route => <SearchResult key={route} route={route} />)}
+      </ListGroup>
+    </div>
+  );
 }
-
-export default withRouter(Search);

@@ -10,7 +10,6 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
  * @prop {(value: string) => void} onValueChange
  * 
  * @param {Props} props 
- * @param {any} ref 
  */
 function VoiceSearchBox(props, ref) {
   return (
@@ -18,7 +17,7 @@ function VoiceSearchBox(props, ref) {
       <InputGroup.Prepend>
         <InputGroup.Text><FontAwesomeIcon icon={faSearch} /></InputGroup.Text>
       </InputGroup.Prepend>
-      <FormControl type="text" value={props.value} onChange={event => props.onValueChange(event.target.value)} placeholder="Search..." ref={ref} />
+      <FormControl type="text" value={props.value} onChange={event => props.onValueChange(event.target.value)} placeholder="Search..." />
     </InputGroup>
   );
 }
