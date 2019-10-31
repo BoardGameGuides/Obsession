@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import { parse, stringify } from 'query-string';
 import { Link, useLocation, useHistory } from 'react-router-dom';
 import { Form, FormGroup, ListGroup } from 'react-bootstrap';
@@ -16,18 +15,33 @@ function SearchResult(props) {
   return <ListGroup.Item as={Link} to={props.route} action>{routes[props.route].displayTitle}</ListGroup.Item>;
 }
 
+/**
+ * Gets the search query from the location uri.
+ * @param {import('history').Location} location
+ */
+function getQuery(location) {
+  const uriParameters = parse(location.search);
+  return (/** @type {string} */ (uriParameters.q) || '').trim();
+}
+
 export default function Search() {
   const history = useHistory();
   const location = useLocation();
   const [state, setState] = useState({ query: '', results: [] });
 
-  function requestedQuery() {
-    const uriParameters = parse(location.search);
-    return (/** @type {string} */ (uriParameters.q) || '').trim();
+  /**
+   * If the requested query does not match the current location uri, then update the location uri.
+   * @param {string} query 
+   */
+  function updateQuery(query) {
+    if (query !== getQuery(location)) {
+      history.replace({ search: '?' + stringify({ q: query }) });
+    }
   }
 
-  function search() {
-    const query = requestedQuery();
+  /** Perform a search on load and every time the location uri changes. */
+  useEffect(() => {
+    const query = getQuery(location);
 
     // Handle numeric searches specially:
     // - Boost the number. If "10" is in the document, that's a very high match.
@@ -50,19 +64,6 @@ export default function Search() {
     const results = queryResults.map(x => '/' + x.ref);
     console.log(results);
     setState({ query, results });
-  }
-
-  /**
-   * @param {string} query 
-   */
-  function updateQuery(query) {
-    if (query !== requestedQuery()) {
-      history.replace({ search: '?' + stringify({ q: query }) });
-    }
-  }
-
-  useEffect(() => {
-    search();
   }, [location]);
 
   return (

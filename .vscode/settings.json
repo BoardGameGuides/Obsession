@@ -9,5 +9,6 @@
         "onupdatefound",
         "precached"
     ],
-    "javascript.implicitProjectConfig.checkJs": true
+    "javascript.implicitProjectConfig.checkJs": true,
+    "emmet.showExpandedAbbreviation": "inMarkupAndStylesheetFilesOnly"
 }
