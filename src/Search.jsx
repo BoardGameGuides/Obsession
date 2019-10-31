@@ -2,9 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { parse, stringify } from 'query-string';
 import { Link, withRouter } from 'react-router-dom';
-import { Form, FormGroup, FormControl, InputGroup, ListGroup } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { Form, FormGroup, ListGroup } from 'react-bootstrap';
+import VoiceSearchBox from './VoiceSearchBox';
 import { index } from './searchIndex';
 import { routes } from './contentFiles';
 import { numberToWords } from './shared/searchSettings';
@@ -30,7 +29,7 @@ class Search extends React.Component {
     super(props);
     this.state = { query: '', results: [] };
 
-    this.handleChange = this.handleChange.bind(this);
+    this.search = this.search.bind(this);
   }
 
   requestedQuery() {
@@ -69,10 +68,6 @@ class Search extends React.Component {
     this.setState({ query, results });
   }
 
-  handleChange(event) {
-    this.search(event.target.value);
-  }
-
   componentDidMount() {
     this.search(this.requestedQuery());
     this.searchInput.focus();
@@ -83,14 +78,7 @@ class Search extends React.Component {
       <div>
         <Form>
           <FormGroup>
-            <InputGroup>
-              <InputGroup.Prepend>
-                <InputGroup.Text><FontAwesomeIcon icon={faSearch} /></InputGroup.Text>
-              </InputGroup.Prepend>
-              {/*
-              // @ts-ignore */}
-              <FormControl type="text" value={this.state.query} onChange={this.handleChange} placeholder="Search..." ref={input => this.searchInput = /** @type {InputElement} */ (ReactDOM.findDOMNode(input))} />
-            </InputGroup>
+            <VoiceSearchBox value={this.state.query} onValueChange={this.search} ref={/** @type {any} */ (input) => this.searchInput = /** @type {HTMLInputElement} */ (ReactDOM.findDOMNode(input))} />
           </FormGroup>
         </Form>
         <ListGroup>
