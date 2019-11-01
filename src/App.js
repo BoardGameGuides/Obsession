@@ -1,13 +1,15 @@
 import React from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
+import { Container, Row, Col } from 'react-bootstrap';
 import './App.css';
 import Home from './Home';
 import MdxPage from './MdxPage';
 import ScrollToTop from './ScrollToTop';
-import Template from './Template';
 import Search from './Search';
 import Nav from './Nav';
+import wallpaper from './wallpaper.png';
 import { routes } from './contentFiles';
+import { CurrentRouteContext } from './state/currentRoute';
 
 function App() {
   return (
@@ -15,15 +17,25 @@ function App() {
       <Router>
         <ScrollToTop />
         <Nav />
-        <Switch>
-          {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template route={route}><MdxPage /></Template></Route>)}
-          <Route path="/search">
-            <Template route="/search"><Search /></Template>
-          </Route>
-          <Route path="/">
-            <Template route="/"><Home /></Template>
-          </Route>
-        </Switch>
+        <Container fluid>
+          <Row>
+            <Col lg="2" md="1" style={{ backgroundImage: 'url(' + wallpaper + ')' }} />
+            <Col lg="8" md="10">
+              <div className="content">
+                <Switch>
+                  {Object.keys(routes).map(route => <Route exact path={route} key={route}><CurrentRouteContext.Provider value={route}><MdxPage /></CurrentRouteContext.Provider></Route>)}
+                  <Route path="/search">
+                    <CurrentRouteContext.Provider value="/search"><Search /></CurrentRouteContext.Provider>
+                  </Route>
+                  <Route path="/">
+                    <CurrentRouteContext.Provider value="/"><Home /></CurrentRouteContext.Provider>
+                  </Route>
+                </Switch>
+              </div>
+            </Col>
+            <Col lg="2" md="1" style={{ backgroundImage: 'url(' + wallpaper + ')' }} />
+          </Row>
+        </Container>
       </Router>
     </React.StrictMode>
   );
