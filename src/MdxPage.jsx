@@ -1,9 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import { isExternal, resolveRoute } from './shared/path';
 import { images, imagesDimensions, routes } from './contentFiles';
-import { CurrentRouteContext } from './state/currentRoute';
 
 /**
  * Produces `img` tags, interpreting local paths as references to imported images.
@@ -41,20 +40,16 @@ function RelativeLink(route) {
  * Renders an imported MDX page.
  */
 export default function MdxPage() {
+  const location = useLocation();
+  const route = location.pathname;
+  const components = {
+    img: RelativeImage(route),
+    a: RelativeLink(route)
+  };
   return (
-    <CurrentRouteContext.Consumer>
-      {route => {
-        const components = {
-          img: RelativeImage(route),
-          a: RelativeLink(route)
-        };
-        return (
-          <div>
-            <h1>{routes[route].metadata.title}</h1>
-            <MDXProvider components={components}>{React.createElement(routes[route].Component)}</MDXProvider>
-          </div>
-        );
-      }}
-    </CurrentRouteContext.Consumer>
+    <div>
+      <h1>{routes[route].metadata.title}</h1>
+      <MDXProvider components={components}>{React.createElement(routes[route].Component)}</MDXProvider>
+    </div>
   );
 }

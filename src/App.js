@@ -9,7 +9,6 @@ import Search from './Search';
 import Nav from './Nav';
 import wallpaper from './wallpaper.png';
 import { routes } from './contentFiles';
-import { CurrentRouteContext } from './state/currentRoute';
 
 function App() {
   return (
@@ -23,12 +22,12 @@ function App() {
             <Col lg="8" md="10">
               <div className="content">
                 <Switch>
-                  {Object.keys(routes).map(route => <Route exact path={route} key={route}><CurrentRouteContext.Provider value={route}><MdxPage /></CurrentRouteContext.Provider></Route>)}
+                  {Object.keys(routes).map(route => <Route exact path={route} key={route}><MdxPage /></Route>)}
                   <Route path="/search">
-                    <CurrentRouteContext.Provider value="/search"><Search /></CurrentRouteContext.Provider>
+                    <Search />
                   </Route>
                   <Route path="/">
-                    <CurrentRouteContext.Provider value="/"><Home /></CurrentRouteContext.Provider>
+                    <Home />
                   </Route>
                 </Switch>
               </div>
