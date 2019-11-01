@@ -10,18 +10,20 @@ import { routes } from './contentFiles';
 
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <Switch>
-        {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template route={route}><MdxPage /></Template></Route>)}
-        <Route path="/search">
-          <Template route="/search"><Search /></Template>
-        </Route>
-        <Route path="/">
-          <Template route="/"><Home /></Template>
-        </Route>
-      </Switch>
-    </Router>
+    <React.StrictMode>
+      <Router>
+        <ScrollToTop />
+        <Switch>
+          {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template route={route}><MdxPage /></Template></Route>)}
+          <Route path="/search">
+            <Template route="/search"><Search /></Template>
+          </Route>
+          <Route path="/">
+            <Template route="/"><Home /></Template>
+          </Route>
+        </Switch>
+      </Router>
+    </React.StrictMode>
   );
 }
 
