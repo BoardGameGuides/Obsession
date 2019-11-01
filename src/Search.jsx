@@ -27,7 +27,7 @@ function getQuery(location) {
 export default function Search() {
   const history = useHistory();
   const location = useLocation();
-  const [state, setState] = useState({ query: '', results: [] });
+  const [results, setResults] = useState(/** @type {string[]} */ ([]));
 
   /**
    * If the requested query does not match the current location uri, then update the location uri.
@@ -63,18 +63,18 @@ export default function Search() {
     }
     const results = queryResults.map(x => '/' + x.ref);
     console.log(results);
-    setState({ query, results });
+    setResults(results);
   }, [location]);
 
   return (
     <div>
       <Form>
         <FormGroup>
-          <VoiceSearchBox value={state.query} onValueChange={updateQuery} />
+          <VoiceSearchBox value={getQuery(location)} onValueChange={updateQuery} />
         </FormGroup>
       </Form>
       <ListGroup>
-        {state.results.map(route => <SearchResult key={route} route={route} />)}
+        {results.map(route => <SearchResult key={route} route={route} />)}
       </ListGroup>
     </div>
   );
