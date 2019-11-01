@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { findDOMNode } from 'react-dom';
 import { InputGroup, FormControl, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,6 +14,24 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
  */
 function VoiceSearchBox(props) {
   const location = useLocation();
+  /** @type {React.MutableRefObject<HTMLInputElement>} */
+  const input = useRef(null);
+
+  // If navigating to the search page using the search icon button, focus the input box.
+  useEffect(() => {
+    if (location.pathname === '/search' && props.value === '' && input.current != null) {
+      input.current.focus();
+    }
+  }, [location.pathname, props.value, input]);
+
+  // See https://react-bootstrap.github.io/components/forms/#forms
+  const formControlRef = useCallback(node => {
+    if (node === null) {
+      input.current = null;
+    } else {
+      input.current = /** @type {HTMLInputElement} */ (findDOMNode(node));
+    }
+  }, []);
 
   return (
     <InputGroup>
@@ -22,7 +41,7 @@ function VoiceSearchBox(props) {
           <Button as={Link} to="/search" variant="outline-primary"><FontAwesomeIcon icon={faSearch} /></Button>
         }
       </InputGroup.Prepend>
-      <FormControl type="text" value={props.value} onChange={event => props.onValueChange(event.target.value)} placeholder="Search..." />
+      <FormControl type="text" value={props.value} onChange={event => props.onValueChange(event.target.value)} placeholder="Search..." ref={formControlRef} />
     </InputGroup>
   );
 }
