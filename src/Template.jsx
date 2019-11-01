@@ -54,8 +54,8 @@ export default function Template(props) {
     value => history.push('/search' + queryToLocationSearch(value));
   return (
     <CurrentRouteContext.Provider value={props.route}>
-      <Navbar bg="light">
-        <ul className="navbar-nav mr-auto">
+      <Navbar bg="light" className="d-flex justify-content-between">
+        <ul className="navbar-nav">
           <Navbar.Brand>
             {props.route === '/' ? logo :
               <Link to="/">
@@ -64,13 +64,15 @@ export default function Template(props) {
             }
           </Navbar.Brand>
           <Form inline>
-            <Button onClick={history.goBack} variant="outline-primary"><FontAwesomeIcon icon={faArrowLeft} /> Back</Button>
+            <Button onClick={history.goBack} variant="outline-primary"><FontAwesomeIcon icon={faArrowLeft} /><span className="d-none d-md-inline"> Back</span></Button>
           </Form>
         </ul>
-        <VoiceSearchBox key="search" value={searchQuery} onValueChange={searchValueChange} />
+        <ul className="navbar-nav col-lg-6 col-md-7 mx-2 px-0">
+          <VoiceSearchBox key="search" value={searchQuery} onValueChange={searchValueChange} />
+        </ul>
         <ul className="navbar-nav">
           <Form inline>
-            <Button as={Link} to="/settings" variant="outline-primary"><FontAwesomeIcon icon={faWrench} /> Settings</Button>
+            <Button as={Link} to="/settings" variant="outline-primary"><FontAwesomeIcon icon={faWrench} /><span className="d-none d-md-inline"> Settings</span></Button>
           </Form>
         </ul>
       </Navbar>
