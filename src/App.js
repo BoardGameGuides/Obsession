@@ -6,6 +6,7 @@ import MdxPage from './MdxPage';
 import ScrollToTop from './ScrollToTop';
 import Template from './Template';
 import Search from './Search';
+import Nav from './Nav';
 import { routes } from './contentFiles';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
     <React.StrictMode>
       <Router>
         <ScrollToTop />
+        <Nav />
         <Switch>
           {Object.keys(routes).map(route => <Route exact path={route} key={route}><Template route={route}><MdxPage /></Template></Route>)}
           <Route path="/search">

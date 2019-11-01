@@ -1,6 +1,5 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import Nav from './Nav';
 import wallpaper from './wallpaper.png';
 import { CurrentRouteContext } from './state/currentRoute';
 
@@ -11,7 +10,6 @@ import { CurrentRouteContext } from './state/currentRoute';
 export default function Template(props) {
   return (
     <CurrentRouteContext.Provider value={props.route}>
-      <Nav/>
       <Container fluid>
         <Row>
           <Col lg="2" md="1" style={{ backgroundImage: 'url(' + wallpaper + ')' }} />
