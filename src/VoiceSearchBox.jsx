@@ -1,5 +1,4 @@
-import React, { useCallback, useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 import { InputGroup, FormControl, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,25 +13,6 @@ import { CurrentRouteContext } from './state/currentRoute';
  * @param {Props} props 
  */
 function VoiceSearchBox(props) {
-  /** @type {React.MutableRefObject<HTMLInputElement>} */
-  const input = useRef(null);
-
-  /** Focus on initial load. */
-  useEffect(() => {
-    if (input.current !== null) {
-      input.current.focus();
-    }
-  }, [input]);
-
-  // See https://react-bootstrap.github.io/components/forms/#forms
-  const formControlRef = useCallback(node => {
-    if (node === null) {
-      input.current = null;
-    } else {
-      input.current = /** @type {HTMLInputElement} */ (ReactDOM.findDOMNode(node));
-    }
-  }, []);
-
   return (
     <InputGroup>
       <InputGroup.Prepend>
@@ -43,7 +23,7 @@ function VoiceSearchBox(props) {
           }
         </CurrentRouteContext.Consumer>
       </InputGroup.Prepend>
-      <FormControl type="text" value={props.value} onChange={event => props.onValueChange(event.target.value)} placeholder="Search..." ref={formControlRef} />
+      <FormControl type="text" value={props.value} onChange={event => props.onValueChange(event.target.value)} placeholder="Search..." />
     </InputGroup>
   );
 }

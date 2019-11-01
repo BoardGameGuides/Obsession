@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { parse, stringify } from 'query-string';
-import { Link, useLocation, useHistory } from 'react-router-dom';
-import { Form, FormGroup, ListGroup } from 'react-bootstrap';
-import VoiceSearchBox from './VoiceSearchBox';
+import { parse } from 'query-string';
+import { Link, useLocation } from 'react-router-dom';
+import { ListGroup } from 'react-bootstrap';
 import { index } from './searchIndex';
 import { routes } from './contentFiles';
 import { numberToWords } from './shared/searchSettings';
@@ -25,19 +24,8 @@ function getQuery(location) {
 }
 
 export default function Search() {
-  const history = useHistory();
   const location = useLocation();
   const [results, setResults] = useState(/** @type {string[]} */ ([]));
-
-  /**
-   * If the requested query does not match the current location uri, then update the location uri.
-   * @param {string} query 
-   */
-  function updateQuery(query) {
-    if (query !== getQuery(location)) {
-      history.replace({ search: '?' + stringify({ q: query }) });
-    }
-  }
 
   /** Perform a search on load and every time the location uri changes. */
   useEffect(() => {
@@ -68,11 +56,6 @@ export default function Search() {
 
   return (
     <div>
-      <Form>
-        <FormGroup>
-          <VoiceSearchBox value={getQuery(location)} onValueChange={updateQuery} />
-        </FormGroup>
-      </Form>
       <ListGroup>
         {results.map(route => <SearchResult key={route} route={route} />)}
       </ListGroup>

@@ -1,20 +1,57 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Navbar, Form, Button } from 'react-bootstrap';
+import { parse, stringify } from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faWrench, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faWrench, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import logo30 from './logo30.png';
 import wallpaper from './wallpaper.png';
 import { name } from './shared/game-specific/properties';
 import { CurrentRouteContext } from './state/currentRoute';
+import VoiceSearchBox from './VoiceSearchBox';
+
+/**
+ * Gets the search query from the location uri.
+ * @param {string} locationSearch
+ */
+function locationSearchToQuery(locationSearch) {
+  const uriParameters = parse(locationSearch);
+  return (/** @type {string} */ (uriParameters.q) || '').trim();
+}
+
+/**
+ * 
+ * @param {string} query 
+ */
+function queryToLocationSearch(query) {
+  return '?' + stringify({ q: query });
+}
+
+/**
+ * If the requested query does not match the current location uri, then update the location uri.
+ * @param {import('history').Location} location
+ * @param {import('history').History} history
+ * @param {string} query 
+ */
+function updateLocation(location, history, query) {
+  if (query !== locationSearchToQuery(location.search)) {
+    history.replace({ search: queryToLocationSearch(query) });
+  }
+}
 
 /**
  * 
  * @param {{route: string; children?: import('react').ReactNode;}} props 
  */
 export default function Template(props) {
+  const location = useLocation();
   const history = useHistory();
   const logo = <img src={logo30} width="30" height="30" alt={name + " logo"} />;
+  const searchQuery = props.route === '/search' ? locationSearchToQuery(location.search) : "";
+  /** @type {(value: string) => void} */
+  const searchValueChange = props.route === '/search' ?
+    value => history.replace({ search: queryToLocationSearch(value) }) :
+    value => history.push('/search' + queryToLocationSearch(value));
   return (
     <CurrentRouteContext.Provider value={props.route}>
       <Navbar bg="light">
@@ -30,13 +67,7 @@ export default function Template(props) {
             <Button onClick={history.goBack} variant="outline-primary"><FontAwesomeIcon icon={faArrowLeft} /> Back</Button>
           </Form>
         </ul>
-        {props.route === '/search' ? null :
-          <ul className="navbar-nav flex-grow-1 justify-content-center">
-            <Form inline>
-              <Button as={Link} to="/search" variant="outline-primary"><FontAwesomeIcon icon={faSearch} /> Search</Button>
-            </Form>
-          </ul>
-        }
+        <VoiceSearchBox key="search" value={searchQuery} onValueChange={searchValueChange} />
         <ul className="navbar-nav">
           <Form inline>
             <Button as={Link} to="/settings" variant="outline-primary"><FontAwesomeIcon icon={faWrench} /> Settings</Button>
