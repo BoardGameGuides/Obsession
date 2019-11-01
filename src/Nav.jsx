@@ -1,29 +1,12 @@
 import React from 'react';
 import { Link, Switch, Route, useHistory, useLocation } from 'react-router-dom';
 import { Navbar, Form, Button } from 'react-bootstrap';
-import { parse, stringify } from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWrench, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import logo30 from './logo30.png';
 import { name } from './shared/game-specific/properties';
 import VoiceSearchBox from './VoiceSearchBox';
-
-/**
- * Gets the search query from the location uri.
- * @param {string} locationSearch
- */
-function locationSearchToQuery(locationSearch) {
-  const uriParameters = parse(locationSearch);
-  return (/** @type {string} */ (uriParameters.q) || '').trim();
-}
-
-/**
- * 
- * @param {string} query 
- */
-function queryToLocationSearch(query) {
-  return '?' + stringify({ q: query });
-}
+import { locationSearchToQuery, queryToLocationSearch } from './Search';
 
 export default function Nav() {
   const location = useLocation();
