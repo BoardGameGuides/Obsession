@@ -3,9 +3,9 @@ import { Link, Switch, Route, useHistory, useLocation } from 'react-router-dom';
 import { Navbar, Form, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWrench, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import VoiceSearchBox from './VoiceSearchBox';
 import logo30 from './logo30.png';
 import { name } from './shared/game-specific/properties';
-import VoiceSearchBox from './VoiceSearchBox';
 import { locationSearchToQuery, queryToLocationSearch } from './Search';
 
 export default function Nav() {

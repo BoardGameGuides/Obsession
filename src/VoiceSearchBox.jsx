@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useContext, useState } from 'react';
 import { findDOMNode } from 'react-dom';
 import { InputGroup, FormControl, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faMicrophoneAlt } from '@fortawesome/free-solid-svg-icons';
+import { SpeechRecognitionContext } from './SpeechRecognition';
 
 /**
  * @typedef {object} Props
@@ -16,6 +17,8 @@ function VoiceSearchBox(props) {
   const location = useLocation();
   /** @type {React.MutableRefObject<HTMLInputElement>} */
   const input = useRef(null);
+  const [speechTranscript, setSpeechTranscript] = useState('');
+  const speech = useContext(SpeechRecognitionContext);
 
   // If navigating to the search page using the search icon button, focus the input box.
   useEffect(() => {
@@ -33,6 +36,16 @@ function VoiceSearchBox(props) {
     }
   }, []);
 
+  // If the speech transcript changes, update the URI.
+  useEffect(() => {
+    if (speechTranscript !== speech.transcript) {
+      setSpeechTranscript(speech.transcript);
+      if (speech.listening) {
+        props.onValueChange(speech.transcript);
+      }
+    }
+  }, [speechTranscript, speech.transcript, speech.listening, props]);
+
   return (
     <InputGroup>
       <InputGroup.Prepend>
@@ -42,6 +55,11 @@ function VoiceSearchBox(props) {
         }
       </InputGroup.Prepend>
       <FormControl type="text" value={props.value} onChange={event => props.onValueChange(event.target.value)} placeholder="Search..." ref={formControlRef} />
+      {!speech.browserSupportsSpeechRecognition ? null :
+        <InputGroup.Append>
+          <Button variant="outline-primary" onClick={() => speech.startListening()}><FontAwesomeIcon icon={faMicrophoneAlt} /></Button>
+        </InputGroup.Append>
+      }
     </InputGroup>
   );
 }
