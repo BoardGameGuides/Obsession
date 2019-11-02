@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useReducer } from 'react';
 
-/** @type {typeof(window.SpeechRecognition)} */
+/** @type {typeof window.SpeechRecognition} */
 const BrowserSpeechRecognition = window && (window.SpeechRecognition ||
   window['webkitSpeechRecognition'] ||
   window['mozSpeechRecognition'] ||
