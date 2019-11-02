@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-//import SpeechRecognition from 'react-speech-recognition';
+import { useState, useRef, useEffect, useReducer } from 'react';
 
 /** @type {typeof(window.SpeechRecognition)} */
 const BrowserSpeechRecognition = window && (window.SpeechRecognition ||
@@ -39,12 +38,47 @@ function getTranscript(speechRecognitionResultList, predicate) {
   return concat(...result);
 }
 
+/**
+ * @typedef {object} State
+ * @property {string} final
+ * @property {string} transcript
+ */
+const initialState = { final: '', transcript: '' };
+
+/**
+ * @typedef {object} UpdateFinalTranscriptAction
+ * @property {'UpdateFinalTranscript'} type
+ * @property {string} final
+ */
+
+/**
+ * @typedef {object} UpdateTransientTranscriptAction
+ * @property {'UpdateTransientTranscript'} type
+ * @property {string} transient
+ */
+
+/**
+ * 
+ * @param {State} state 
+ * @param {UpdateFinalTranscriptAction|UpdateTransientTranscriptAction} action
+ * @returns {State} 
+ */
+function reducer(state, action) {
+  switch (action.type) {
+    case 'UpdateFinalTranscript':
+      return {...state, final: concat(state.final, action.final)};
+    case 'UpdateTransientTranscript':
+      return {...state, transcript: concat(state.final, action.transient)};
+    default:
+      throw new Error();
+  }
+}
+
 export function useSpeechRecognition() {
   const recognition = useRef(BrowserSpeechRecognition ? createRecognition() : null);
   const browserSupportsSpeechRecognition = recognition.current !== null;
   const [listening, setListening] = useState(false);
-  const [final, setFinal] = useState('');
-  const [transcript, setTranscript] = useState('');
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     if (!browserSupportsSpeechRecognition) {
@@ -56,13 +90,11 @@ export function useSpeechRecognition() {
      * @param {SpeechRecognitionEvent} event 
      */
     function handleResult(event) {
-      const additionalFinal = getTranscript(event.results, x => x.isFinal);
-      console.log('additionalFinal', additionalFinal);
-      setFinal(x => concat(x, additionalFinal));
+      const final = getTranscript(event.results, x => x.isFinal);
+      dispatch({ type: 'UpdateFinalTranscript', final });
 
       const transient = getTranscript(event.results, x => !x.isFinal);
-      console.log('transient', transient);
-      setTranscript(concat(final, additionalFinal, transient));
+      dispatch({ type: 'UpdateTransientTranscript', transient });
     }
 
     function handleEnd() {
@@ -80,7 +112,7 @@ export function useSpeechRecognition() {
 
   return {
     browserSupportsSpeechRecognition,
-    transcript,
+    transcript: state.transcript,
     startListening: browserSupportsSpeechRecognition ? () => { setListening(true); recognition.current.start(); } : () => { },
     listening
   };
