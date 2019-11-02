@@ -4,7 +4,7 @@ import { InputGroup, FormControl, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faMicrophoneAlt } from '@fortawesome/free-solid-svg-icons';
-import { SpeechRecognitionContext } from './SpeechRecognition';
+import { useSpeechRecognition } from './SpeechRecognition';
 
 /**
  * @typedef {object} Props
@@ -18,7 +18,7 @@ function VoiceSearchBox(props) {
   /** @type {React.MutableRefObject<HTMLInputElement>} */
   const input = useRef(null);
   const [speechTranscript, setSpeechTranscript] = useState('');
-  const speech = useContext(SpeechRecognitionContext);
+  const speech = useSpeechRecognition();
 
   // If navigating to the search page using the search icon button, focus the input box.
   useEffect(() => {
