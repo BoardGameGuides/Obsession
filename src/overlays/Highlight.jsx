@@ -43,7 +43,8 @@ export default function Highlight(props) {
   return (
     <p>
       <svg width={width} height={height} style={{ display: "block", margin: "0 auto" }} className="img-fluid" viewBox={`0 0 ${width} ${height}`}>
-        <image xlinkHref={images[imageRoute].src} />
+        {/* Edge requires height and width on the image: https://stackoverflow.com/a/42695084/263693 */}
+        <image xlinkHref={images[imageRoute].src} width={width} height={height} />
         <path d={path} fill="black" fillOpacity="0.5" fillRule="evenodd" />
         <path d={highlightPath} stroke="red" fill="none" strokeWidth="3" strokeLinejoin="round" />
       </svg>
