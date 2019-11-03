@@ -61,9 +61,14 @@ const initialState = { final: '', transcript: '' };
  */
 
 /**
+ * @typedef {object} ClearTranscriptAction
+ * @property {'ClearTranscript'} type
+ */
+
+/**
  * Reducer for transcript state.
  * @param {State} state The original state.
- * @param {UpdateFinalTranscriptAction|UpdateTransientTranscriptAction} action The action to apply.
+ * @param {UpdateFinalTranscriptAction|UpdateTransientTranscriptAction|ClearTranscriptAction} action The action to apply.
  * @returns {State} 
  */
 function reducer(state, action) {
@@ -72,6 +77,8 @@ function reducer(state, action) {
       return {...state, final: concat(state.final, action.final)};
     case 'UpdateTransientTranscript':
       return {...state, transcript: concat(state.final, action.transient)};
+    case 'ClearTranscript':
+      return initialState;
     default:
       throw new Error();
   }
@@ -116,10 +123,16 @@ export function useSpeechRecognition() {
     }
   }, [browserSupportsSpeechRecognition]);
 
+  function startListening() {
+    dispatch({ type: 'ClearTranscript' });
+    setListening(true);
+    recognition.current.start();
+  }
+
   return {
     browserSupportsSpeechRecognition,
     transcript: state.transcript,
-    startListening: browserSupportsSpeechRecognition ? () => { setListening(true); recognition.current.start(); } : () => { },
+    startListening: browserSupportsSpeechRecognition ? startListening : () => { },
     listening
   };
 }
