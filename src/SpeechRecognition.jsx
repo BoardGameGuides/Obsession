@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useReducer } from 'react';
+import { useRef, useEffect, useReducer } from 'react';
 
 /** @type {typeof window.SpeechRecognition} */
 const BrowserSpeechRecognition = window && (window.SpeechRecognition ||
@@ -43,10 +43,12 @@ function getTranscript(speechRecognitionResultList, predicate) {
 
 /**
  * @typedef {object} State
+ * @property {boolean} listening Whether the browser is currently listening for speech.
  * @property {string} final The transcript so far that has been finalized.
  * @property {string} transcript The full transcript, including the finalized transcript followed by the transient transcript.
  */
-const initialState = { final: '', transcript: '' };
+/** @type {State} */
+const initialState = { listening: false, final: '', transcript: '' };
 
 /**
  * @typedef {object} UpdateFinalTranscriptAction
@@ -61,14 +63,19 @@ const initialState = { final: '', transcript: '' };
  */
 
 /**
- * @typedef {object} ClearTranscriptAction
- * @property {'ClearTranscript'} type
+ * @typedef {object} StartTranscriptAction
+ * @property {'StartTranscript'} type
+ */
+
+/**
+ * @typedef {object} EndTranscriptAction
+ * @property {'EndTranscript'} type
  */
 
 /**
  * Reducer for transcript state.
  * @param {State} state The original state.
- * @param {UpdateFinalTranscriptAction|UpdateTransientTranscriptAction|ClearTranscriptAction} action The action to apply.
+ * @param {UpdateFinalTranscriptAction|UpdateTransientTranscriptAction|StartTranscriptAction|EndTranscriptAction} action The action to apply.
  * @returns {State} 
  */
 function reducer(state, action) {
@@ -77,8 +84,10 @@ function reducer(state, action) {
       return {...state, final: concat(state.final, action.final)};
     case 'UpdateTransientTranscript':
       return {...state, transcript: concat(state.final, action.transient)};
-    case 'ClearTranscript':
-      return initialState;
+    case 'StartTranscript':
+      return {...initialState, listening: true};
+    case 'EndTranscript':
+      return {...state, listening: false};
     default:
       throw new Error();
   }
@@ -87,7 +96,6 @@ function reducer(state, action) {
 export function useSpeechRecognition() {
   const recognition = useRef(BrowserSpeechRecognition ? createRecognition() : null);
   const browserSupportsSpeechRecognition = recognition.current !== null;
-  const [listening, setListening] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -111,7 +119,7 @@ export function useSpeechRecognition() {
      * Handles the `onend` event from the browser speech recognition object.
      */
     function handleEnd() {
-      setListening(false);
+      dispatch({ type: 'EndTranscript' });
     }
 
     const r = recognition.current;
@@ -124,15 +132,14 @@ export function useSpeechRecognition() {
   }, [browserSupportsSpeechRecognition]);
 
   function startListening() {
-    dispatch({ type: 'ClearTranscript' });
-    setListening(true);
+    dispatch({ type: 'StartTranscript' });
     recognition.current.start();
   }
 
   return {
     browserSupportsSpeechRecognition,
+    listening: state.listening,
     transcript: state.transcript,
-    startListening: browserSupportsSpeechRecognition ? startListening : () => { },
-    listening
+    startListening: browserSupportsSpeechRecognition ? startListening : () => { }
   };
 }
