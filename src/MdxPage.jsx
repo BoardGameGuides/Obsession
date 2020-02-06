@@ -10,7 +10,7 @@ import { images, imagesDimensions, routes } from './contentFiles';
  * @returns {(props: any) => JSX.Element}
  */
 function RelativeImage(route) {
-  return function (props) {
+  return function RelativeImage(props) {
     if (isExternal(props.src))
       return <img {...props} alt={props.alt} />;
 
@@ -27,7 +27,7 @@ function RelativeImage(route) {
  * @returns {(props: any) => JSX.Element}
  */
 function RelativeLink(route) {
-  return function (props) {
+  return function RelativeLink(props) {
     if (isExternal(props.href))
       return <a {...props}>{props.children}</a>;
 
